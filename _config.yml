@@ -1,0 +1,22 @@
+title:              Udeshya
+email:              udeshyadhungana1@gmail.com
+description:        My blog site, to express my thoughts.
+author:             Udeshya
+
+# Social Profiles
+twitter_username:   Udeshya_D
+github_username:    UdeshyaDhungana
+instagram_username: d_ude95   
+linkedin_username: in/udeshya-d-2842301b1
+
+# Add your google-analytics ID here to activate google analytics
+#google_analytics:   UA-XXXXXXXXX-X # out your google-analytics code
+
+# Build settings
+markdown:           kramdown
+paginate:           5
+paginate_path:      "/posts/page:num/"
+plugins:
+  - jekyll-feed
+  - jekyll-paginate
+  - jekyll-sitemap ## Uncomment this line to silently generate a sitemaps.org compliant sitemap for your Jekyll site
