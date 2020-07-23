@@ -10,9 +10,9 @@ My interests are  Web Development, and the field of Artificial Intelligence.
 <br>
 ## Academic Background
 ---
- - SLC from Pokhariya Higher Secondary School, Biratnagar
- - +2 from Arniko Awasiya Higher Secondary School, Biratnagar
- - Ongoing Bachelor's in Computer Engineering from Pulchowk Campus    
+ - SLC: Pokhariya Higher Secondary School, Biratnagar
+ - +2: Arniko Awasiya Higher Secondary School, Biratnagar
+ - Ongoing Bachelor's in Computer Engineering: Pulchowk Campus    
 <br>
 
 ## Work Experiences
@@ -25,7 +25,6 @@ My interests are  Web Development, and the field of Artificial Intelligence.
 ## Skills 
 ---
 
-- Strong mathematics skills
 - Teaching
 	- Maths
 	- Physics
@@ -38,11 +37,12 @@ My interests are  Web Development, and the field of Artificial Intelligence.
 	- Jekyll
 	- Mongodb
 	- Front end design
+
 - Artificial Intelligence
-	- Shallow neural networks
-	- Linear and Logistic regression
+  - Machine Learning
+	- Neural Networks
 	- Unsupervised learning ( Beginner )
-- Linux ecosystem ( Basic scripting, configuration )  
+- Linux ecosystem ( Basic scripting )  
 <br>
 
 ## Hobbies
@@ -55,9 +55,9 @@ My interests are  Web Development, and the field of Artificial Intelligence.
 ## Personal Life
 ---
 
-I was born in a middle class family in Jhorahat, a village near Biratnagar city.
-I have a younger brother. Both my parents are very supportive of me. I lived 13 years of my life where I was born, and then our family moved to Biratnagar. Currently, I live in Kathmandu.  
+I was born in Jhorahat, a village near Biratnagar, Nepal.
+I have a younger brother. Both my parents are very supportive towards me. We moved to Biratnagar in 2013. Currently, I live in Kathmandu(2019-).  
 
 ## Contact me
 ---
-You may reach out to me via the links in the footer
+You may reach out to me via the links in the footer.
