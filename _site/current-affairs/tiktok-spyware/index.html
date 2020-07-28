@@ -9,38 +9,40 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Udeshya</title>
-<meta name="description" content="I am a student of Computer Engineering at Pulchowk Campus, IOE. This is my personal blog for expressing my ideas and thoughts.">
+<!-- begin _includes/seo.html --><title>The problem with tiktok - Udeshya</title>
+<meta name="description" content="">
 
 
   <meta name="author" content="Udeshya Dhungana">
 
 
-<meta property="og:type" content="website">
+<meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="Udeshya">
-<meta property="og:title" content="Udeshya">
-<meta property="og:url" content="http://localhost:4000/">
+<meta property="og:title" content="The problem with tiktok">
+<meta property="og:url" content="http://localhost:4000/current-affairs/tiktok-spyware/">
 
 
-  <meta property="og:description" content="I am a student of Computer Engineering at Pulchowk Campus, IOE. This is my personal blog for expressing my ideas and thoughts.">
-
-
-
+  <meta property="og:description" content="">
 
 
 
-
+  <meta property="og:image" content="http://localhost:4000/assets/images/posts/tiktok.jpg">
 
 
 
 
 
-<link rel="canonical" href="http://localhost:4000/">
+  <meta property="article:published_time" content="2020-06-29T12:18:00+00:00">
 
 
 
-  <link rel="next" href="http://localhost:4000/page2/">
+
+
+
+<link rel="canonical" href="http://localhost:4000/current-affairs/tiktok-spyware/">
+
+
 
 
 <script type="application/ld+json">
@@ -100,7 +102,7 @@
 
   </head>
 
-  <body class="layout--home">
+  <body class="layout--single wide">
     <nav class="skip-links">
   <h2 class="screen-reader-text">Skip links</h2>
   <ul>
@@ -273,33 +275,19 @@
 
 
 
-  <div class="archive">
-    
-      <h1 id="page-title" class="page__title"></h1>
-    
-    
-
-<h3 class="archive__subtitle">Recent Posts</h3>
-
-
-
-<div class="entries-list">
-  
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="The problem with tiktok">
+    <meta itemprop="description" content="">
+    <meta itemprop="datePublished" content="2020-06-29T12:18:00+00:00">
     
 
-
-
-<div class="list__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
+    <div class="page__inner-wrap">
       
-        <a href="/current-affairs/tiktok-spyware/" rel="permalink">The problem with tiktok
-</a>
-      
-    </h2>
-    
-      <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">The problem with tiktok
+</h1>
+          
+            <p class="page__meta"><i class="far fa-clock" aria-hidden="true"></i> 
 
 
 
@@ -307,19 +295,147 @@
   3 minute read
 
 </p>
-    
-    <p class="archive__item-excerpt" itemprop="description">
+          
+        </header>
+      
 
-</p>
-  </article>
-</div>
+      <section class="page__content" itemprop="text">
+        
+        <p><img src="/assets/images/posts/tiktok.jpg" alt="Tiktok" title="Tiktok" /></p>
+
+<p>It was early 2018 when teens all around the world started using an app called Musically. It was a video sharing social media app founded by Alex Zhu, a Chinese entrepreneur . Mainly used for making lip sync videos, the app’s popularity skyrockted within months, if not, weeks.</p>
+
+<p>Suddenly, around the August of 2018, Musically was shut down overnight. But, that wasn’t the end of it. The app’s users woke up to a surprise as they found their favorite app replaced with a new logo and name: Tiktok. It had been acquired by a Chinese company Bytedance much earlier, and it was then, when they officially changed the app’s name and logo. It was nothing different for the users. Existing Musically accounts were automatically migrated to Tiktok, with a slight change of UI. But the core feature was same: short videos upto 15 seconds.</p>
+
+<p>The app’s popularity was still uprising. It only took it a few months after that to become no. 1 social media app on the Google Play Store and the iOS App Store. Users didn’t seem to care who was behind the app, or the privacy issues regarding it. As of the date this article is written, Tiktok has 1B+ downloads on the Play Store alone.</p>
+
+<h2 id="tiktok-exposed">Tiktok Exposed</h2>
+<p>The app has been receiving numerous criticisms regarding its privacy and security lately. It is even rumored to be a spyware backed by the CCP. But, let’s not get political and believe in rumors. Searching for the facts, I stumbled upon a reddit comment. It was by a user(link in the footer) whose job is to reverse engineer apps. He is an expert in this field. Here is a summary of his comment. I have provided the link at the end of this post.</p>
+
+<p>After reverse engineering the app, it has been found that it collects following data:</p>
+<ul>
+  <li>Phone hardware (CPU type, hardware IDs, screen dimensions, dpi, memory usage, disk space, etc)</li>
+  <li>Everything related to network (IP address, local IP, router MAC, wifi access point name)</li>
+  <li>Every photos in your gallery. <em>Started to feel a little insecure?</em></li>
+  <li>Whether or not your phone is rooted/jailbroken</li>
+  <li>If location is enabled, it does GPS pinging every 30 seconds. In layman’s terms, it keeps track of your location.</li>
+  <li>Information on other apps you have installed. This includes your Facebook, Instagram, shopping websites, and many more.</li>
+</ul>
+
+<p>The company has different protections in place to prevent anyone from reverse engineering or debugging the app. The app changes its default behavior on knowing that it is being monitored. And the app has few snippets of code which allow it to download a remote zip file, extract it, and execute the binary. Not a single app needs this feature, unless it’s a spyware. Do you think that’s all? Nope, There’s more!</p>
+
+<p>The app has’t been using HTTPS until recently. The company has leaked users’ email addresses, as well as their secondary email, used for password recovery. The security was so weak, that even a beginner hacker could get access to every single one of the their user’s profiles and their personal details effortlessly. The app also opposes free speech. Here’s a <em class="font-italic">not so concrete</em> example. Upload a video of Tiananmen Square protest, and see how it gets taken down faster than you blink. Doesn’t it seem like a <em>whispers</em> propaganda?</p>
+
+<h2 id="problems-beyond-screen">Problems beyond screen</h2>
+
+<p>The app entices its new users by providing them with a sense of ‘virality’. It means that one’s very first video is likely to get more views and likes, regardless of its quality, keeping the user hooked to the platform, craving for more views and likes. Oh, I almost forgot this one! There are also a bunch of creepy old men trying to access the children on the app. It’s been found that 40-50 year old men getting 8-10 year old to do ‘duets’ with them in sexually suggestive songs. I don’t want to trigger anyone but, feminists, I think it’s a problem when 9-10 year olds are twerking to gain views on internet. I’m mentioning this because this is not uncommon on Tiktok.</p>
+
+<h2 id="summary">Summary</h2>
+<p>In conclusion, Tiktok <em class="font-weight-bold">is</em> a spyware. It may be a video sharing website on the front, but it’s much shady on the back. It does everything from exposing your personal information to collecting your data. I think it’s time we, as a conscious consumer, and as a responsible human being, realize that this app is a big problem to us. It’s time we abandon this platform. It’s time we provide other app developers, even from our own country, a chance to create a Tiktok like app, which lets the users enjoy the platform without creating privacy and security issues.</p>
+
+<hr />
+<p>Reddit <a href="https://www.reddit.com/r/videos/comments/fxgi06/not_new_news_but_tbh_if_you_have_tiktiok_just_get/fmuko1m/">comment</a></p>
+
+<p>Background image by <a href="https://www.patentlyapple.com/patently-apple/2019/12/last-month-patently-apple-posted-a-report-titled-testimony-on-apple-tiktok-used-in-background-for-new-national-security-an.html">PatentlyApple’s Blog</a></p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
 
   
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
     
+      
+      
+      <a href="/tags/#data-theft" class="page__taxonomy-item" rel="tag">data theft</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#technology" class="page__taxonomy-item" rel="tag">technology</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#tiktok" class="page__taxonomy-item" rel="tag">tiktok</a>
+    
+    </span>
+  </p>
 
 
 
-<div class="list__item">
+
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-folder-open" aria-hidden="true"></i> Categories: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/categories/#current-affairs" class="page__taxonomy-item" rel="tag">current-affairs</a>
+    
+    </span>
+  </p>
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-06-29T12:18:00+00:00">June 29, 2020</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+
+  <a href="https://twitter.com/intent/tweet?text=The+problem+with+tiktok%20http%3A%2F%2Flocalhost%3A4000%2Fcurrent-affairs%2Ftiktok-spyware%2F" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fcurrent-affairs%2Ftiktok-spyware%2F" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fcurrent-affairs%2Ftiktok-spyware%2F" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/welcome-to-jekyll/" class="pagination--pager" title="Welcome to Jekyll!
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You May Also Enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
   <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
@@ -342,12 +458,12 @@
   </article>
 </div>
 
-  
-    
+        
+          
 
 
 
-<div class="list__item">
+<div class="grid__item">
   <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
@@ -377,12 +493,12 @@
   </article>
 </div>
 
-  
-    
+        
+          
 
 
 
-<div class="list__item">
+<div class="grid__item">
   <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
@@ -407,12 +523,12 @@
   </article>
 </div>
 
-  
-    
+        
+          
 
 
 
-<div class="list__item">
+<div class="grid__item">
   <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
@@ -437,50 +553,13 @@
   </article>
 </div>
 
+        
+      </div>
+    </div>
+  
   
 </div>
 
-
-<nav class="pagination">
-  
-  <ul>
-    
-    
-    <li><a href="#" class="disabled"><span aria-hidden="true">Previous</span></a></li>
-    
-
-    
-    
-      <li><a href="#" class="disabled current">1</a></li>
-    
-
-    
-    
-
-    
-    
-    
-
-    
-
-    
-    
-
-    
-      <li><a href="/page2/">2</a></li>
-    
-
-    
-    
-      <li><a href="/page2/">Next</a></li>
-    
-  </ul>
-</nav>
-
-
-
-  </div>
-</div>
     </div>
 
     
@@ -541,6 +620,17 @@
 <script src="/assets/js/lunr/lunr-en.js"></script>
 
 
+
+
+    <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+  
 
 
 
