@@ -12,6 +12,8 @@ tags:
   - technology
 ---
 
+An article on how big of a data stealer Tiktok really is
+
 ![Tiktok](/assets/images/posts/tiktok.jpg "Tiktok")  
 *Tiktok, Image courtesy in the footer*
 
