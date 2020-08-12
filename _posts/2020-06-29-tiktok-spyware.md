@@ -12,7 +12,8 @@ tags:
   - technology
 ---
 
-![Tiktok](/assets/images/posts/tiktok.jpg "Tiktok")
+![Tiktok](/assets/images/posts/tiktok.jpg "Tiktok")  
+*Tiktok, Image courtesy in the footer*
 
 It was early 2018 when teens all around the world started using an app called Musically. It was a video sharing social media app founded by Alex Zhu, a Chinese entrepreneur . Mainly used for making lip sync videos, the app's popularity skyrockted within months, if not, weeks.   
 
