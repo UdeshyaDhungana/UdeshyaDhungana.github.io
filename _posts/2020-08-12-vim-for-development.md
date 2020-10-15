@@ -1,8 +1,8 @@
 ---
-title: "(Neo)Vim for development" 
+title: "Vim for development" 
+toc: true
 categories:
-   - Development
-classes: wide
+   - Productivity
 tags:
   - vim
   - neovim

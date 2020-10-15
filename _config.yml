@@ -14,15 +14,17 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: Udeshya
+title_separator: "|"
 logo: "./assets/images/site_logo.svg"
 email: udeshyadhungana1@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  I am a student of Computer Engineering at Pulchowk Campus, IOE. This is my
-  personal blog for expressing my ideas and thoughts.
+  I'm a student of Computer Engineering with interest in Calculus, Statistics, and
+  teaching. I've made this blog to share my knowledge. 
 twitter_username: Udeshya_D
 github_username: UdeshyaDhungana
-minimal_mistakes_skin: contrast
+minimal_mistakes_skin: air
 search: true
+og_image: ./assets/images/site_logo.svg
 
 # Build settings
 markdown: kramdown
@@ -31,7 +33,7 @@ remote_theme: mmistakes/minimal-mistakes
 permalink: /:categories/:title/
 paginate: 5 # amount of posts to show
 paginate_path: /page:num/
-timezone: Asia/Kathmandu# https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+timezone: Asia/Kathmandu
 
 include:
   - _pages
@@ -91,9 +93,12 @@ defaults:
       type: posts
     values:
       layout: single
+      classes: wide
+      show_date: true
       author_profile: true
       read_time: true
-      comments: true
+      words_per_minute: 200
+      comments: false
       share: true
       related: true
   # _pages
@@ -104,11 +109,11 @@ defaults:
       layout: single
       author_profile: true
 
-comments:
-  provider: "facebook"
-  facebook:
-    num_posts: 5
-    colorscheme: light
+#comments:
+#  provider: "facebook"
+#  facebook:
+#    num_posts: 5
+#    colorscheme: light
 
 category_archive:
   type: liquid

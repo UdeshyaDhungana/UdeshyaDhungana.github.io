@@ -1,11 +1,10 @@
 ---
 title: "The problem with tiktok"
 date: 2020-06-29T18:03:00+05:45
-classes: wide
 header:
   teaser: ../assets/images/posts/tiktok.jpg
 categories:
-  - current-affairs
+  - Society
 tags:
   - tiktok
   - data theft
