@@ -33,4 +33,18 @@ Now, I want to introduce a little geometry. To include imaginary numbers, we nee
 
 *Picture experted from 3b1b Lockdown Math ep3*
 
+## Mathematical Operations
 
+Common operations like addition, subtraction, multiplication apply to complex numbers as well. Adding add two complex numbers is fairly simple, you put the tail of the second complex number on the head of the first one, and see where the resulting head of two lands. Subtraction is easy as well. Subtracting a complex number $z = x_1 + iy_1$ from another complex number $w = x_2 + iy_2$ involves flipping the latter one and adding them. As it can be seen, this is like vector addition and subtraction, so to perform these two operations, you'd operate on real and imaginary part independently and combine the result.
+
+### Multiplication
+
+Here's where the things get unusual, because if you try to interpolate the analogy between complex numbers and vectors we've been making so far. It doesn't make sense, as vectors only have dot or cross products defined for them, whereas, an imaginary number, being $\sqrt{-1}$ follow rules of scalar multiplication. Strictly speaking, 
+
+$$
+a \times i = ai
+$$
+
+for any real number $a$.
+
+Notice here, this is just like algebraic multiplication where you multiply a variable by a number, but, it's even more than that. Notice, on the argand plane, multiplying by $i$ rotates the point by $90^{\circ}$ anticlockwise. This is an extremely useful observation which we will make use of very often.
