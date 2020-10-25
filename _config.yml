@@ -18,7 +18,7 @@ title_separator: "|"
 logo: "./assets/images/site_logo.svg"
 email: udeshyadhungana1@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  I'm a student of Computer Engineering with interest in Calculus, Statistics, and
+  I'm a student of Computer Engineering with interest in Mathematics, research and
   teaching. I've made this blog to share my knowledge. 
 twitter_username: Udeshya_D
 github_username: UdeshyaDhungana
@@ -62,7 +62,7 @@ plugins:
 author:
   name   : "Udeshya Dhungana"
   avatar : "/assets/images/bio-photo.jpg"
-  bio    : "Machine Learning, Math, Development"
+  bio    : "Data Science, Research & Teaching"
   links:
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"

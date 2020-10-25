@@ -1,6 +1,7 @@
 ---
 title: "The problem with tiktok"
 date: 2020-06-29T18:03:00+05:45
+excerpt: An article on how big of a data stealer Tiktok really is
 header:
   teaser: ../assets/images/posts/tiktok.jpg
 categories:
@@ -10,8 +11,6 @@ tags:
   - data theft
   - technology
 ---
-
-An article on how big of a data stealer Tiktok really is
 
 ![Tiktok](/assets/images/posts/tiktok.jpg "Tiktok")  
 *Tiktok, Image courtesy in the footer*

@@ -1,6 +1,7 @@
 ---
 title: "Vim for development" 
 toc: true
+excerpt: Learn how to harness Vim's speed and keybindings to boost your productivity!
 categories:
    - Productivity
 tags:
@@ -10,8 +11,6 @@ tags:
 header:
   teaser: ../assets/images/posts/neovim.png
 ---
-
-Learn how to harness Vim's speed and keybindings to boost your productivity!
 
 ![Neovim](/assets/images/posts/neovim.png "Neovim")
 *My Neovim setup*
