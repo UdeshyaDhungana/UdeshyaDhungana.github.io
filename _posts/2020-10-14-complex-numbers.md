@@ -12,11 +12,11 @@ header:
   teaser: ../assets/images/posts/complex_numbers/euler.jpg
 ---
 
-Hey folks, today I want to write about a familiar topic in Higher mathematics, complex numbers, and in particular, the Euler's formula. Complex Numbers show up in a number of different fields, like signal processing, electromagetism, quantum mechanics and much more. Though it's a repeatedly occuring content, from what I've noticed, both the students and the experts are perplexed by them. For example, the beginners become puzzled by basic questions such as "What's the meaning of $\sqrt{-1}$ ?" or "Does $\sqrt{-1}$ even exists?" while even the experts don't understand the intuition behind simple formula like Euler's formula, and settle for the explanation provided by hairy equations like Taylor's expansion.
+Hey folks, today I want to write about a familiar topic in Higher mathematics, complex numbers, and in particular, the Euler's formula. Complex Numbers show up in a number of different fields, like signal processing, electromagetism, quantum mechanics and many more. Though it's a frequently occuring content, from what I've noticed, both the students and the experts are perplexed by complex numbers. For example, the beginners become puzzled by basic questions such as "What's the meaning of $\sqrt{-1}$ ?" or "Does $\sqrt{-1}$ even exists?" while even the experts don't understand the intuition behind simple formula like Euler's formula, and settle for the explanation provided by hairy equations like Taylor's expansion.
 
 ## Introduction
 
-Complex Numbers are extension to the real numbers. While it is possible to do mathematics without ever needing to touch complex numbers, their properties is what led us to use them to make our live easier. You might have noticed that complex numbers show up almost all places where circular motion is directly or indirectly involved, for example, the analysis of simple harmonic motion or wave equations. This is not a coincidence, but rather a consequence of how complex numbers behave.
+Complex Numbers are extension to the real numbers. While it is possible to do maths without ever needing to touch complex numbers, we use them because they make our lives easier. You might have noticed that complex numbers show up almost all places where circular motion is directly or indirectly involved, for example, the analysis of simple harmonic motion or wave equations. This is not a coincidence, but rather a consequence of how complex numbers behave.
 
 First, let's talk about imaginary numbers. The fundamental imaginary number is $i$ which is `defined` to be $\sqrt{-1}$. Notice the stress on the word `defined`, meaning that $i$ is not a computed value. Let's derive a simple and useful property by extending this a step further.  
 
@@ -27,15 +27,15 @@ $$
 
 Now, I want to introduce a little geometry. To include imaginary numbers, we need to extend our traditional real number line, as shown below. The obtained plane is called Complex Plane, or Argand Plane. The number $i$ lies where the position $(0,1)$ would lie on an $x-y$ plane. Any number which take the form $x + iy$ is a complex number. The number $x$ is called the real part while $y$ is called the imaginary part of a complex number. Don't get carried away by the fact that the latter part is called 'imaginary', as you'll see in a while, it is every bit as real as any other numbers you can think of. In the diagram below, the number $z$ can be written as $z = 2 + 1i$
 
-![Imaginary number](/assets/images/posts/complex_numbers/imaginary.png)  
-
+![Imaginary number](/assets/images/posts/complex_numbers/imaginary.png)
 *Position of a complex number in complex plane*
 
 ## Mathematical Operations
 
 Common operations like addition, subtraction, multiplication apply to complex numbers as well. Adding two complex numbers is fairly simple, you put the tail of the second complex number on the head of the first one, and see where the resulting head of two lands. Subtraction is easy as well. Subtracting a complex number $z = x_1 + iy_1$ from another complex number $w = x_2 + iy_2$ involves flipping the latter one and adding them. As it can be seen, this is like vector addition and subtraction, so to perform these two operations, you'd operate on real and imaginary part independently and combine the result.
 
-* Image of addition
+![Complex Number Addition](/assets/images/posts/complex_numbers/gifs/addition.gif)
+*Additon of complex numbers is just like adding two vectors*
 
 
 ### Multiplication
@@ -114,12 +114,14 @@ $$
 This motion can be described as follows. The body starts out at $1$ on the number line, because $x(0) = e^0 = 1$. At a certain time, $t$, the body will be at a distance of $e^{2t}$ distance from the origin, and the magnitude of its velocity at that instant will be $2e^{2t}$, i.e, the magnitude of its velocity will be *twice* as much as its distance from origin. The further away the body is from the origin, the greater its velocity would be. We can draw the position vector and the velocity vector of the body to see if it's really true (Spoiler alert, it's true).
 
 ![Exponential Motion](/assets/images/posts/complex_numbers/gifs/exponential_motion.gif)
+*Exponential motion: White vector is the body's position vector, and brown one is its velocity vector*
 
 ### Circular Motion
 
 Another topic in physics that I want to touch here is circular motion. Again, you might remember from the high school that whenever a body is moving in a circle in a 2 dimensional space, it's velocity vector is always perpendicular to its position vector. 
 
 ![Circular Motion](/assets/images/posts/complex_numbers/gifs/circular_motion.gif)
+*Circular Motion: Notice that the velocity vector is perpendicular to its position vector (vector from origin to the body)*
 
 Those who already know why this is true can skip to the next section. For the rest of you, here's a little calculus explaining this. Let $\vec{r}$ be the position vector of a body and $\vec{v}$ be its velocity vector. If $\vec{r}$ and $\vec{v}$ are orthogonal, then the explanation follows as:
 
@@ -175,6 +177,7 @@ r(\pi) = e^{i\pi} = -1
 $$
 
 ![Euler's Formula](/assets/images/posts/complex_numbers/gifs/euler.gif)
+*Physical interpretation behind Euler's formula*
 
 Now let's extend this a step further. Since the body has a unit speed, at time $t$, it would have travelled a distance of $t \times 1 = t$, i.e. covered an arc length of $t$ units. 
 
@@ -191,6 +194,8 @@ r(t) = e^{it} = cos(t) + isin(t)
 $$
 
 ![Euler's Formula: General Case](/assets/images/posts/complex_numbers/gifs/euler_general.gif)
+*General case of the euler's formula*
+
 
 And that is general form of the Euler's formula. It amazes me how such terrifying looking formulae have such a nice interpretation. As it can be seen, that it's not a coincidence that complex numbers tend to show up in places like electromagetism, simple harmonic motion, quantum mechanics, or any place where circular or periodic motion is a key part. The properties of complex numbers exactly resembles that of periodic motion. That's what makes them an effective tool in studying these topics.
 
