@@ -93,7 +93,7 @@ f(2) = 1 + \frac{2}{1} + \frac{4}{2} + \frac{8}{6} + ... \approx 7.38906 = e^2\\
 f(3) = 1 + \frac{3}{1} + \frac{9}{2} + \frac{27}{6} + ... \approx 20.08554 = e^3\\\\
 $$
 
-Since, the function $f(x)$ satisfies the relation that $f(x) = e^x$ for real numbers, scientists and mathematicians started using $e^x$ as the shorhand symbol for the function $f(x)$ because writing $e^x$ is much easier than writing $3$ or $4$ terms of $f(x)$. And the function's name is not $f(x)$, rather it's $exp(x)$. So, $e^z$ is not $e$ raised to the power $z$, but rather syntactic sugar for this long function $f(z)$. That's why, we should tend to think of $e^{i\pi}$ not as $i\pi$ repeated multiplications of $e$, rather the function $f(x)$ evaluated at $i\pi$.
+Since, the function $f(x)$ satisfies the relation that $f(x) = e^x$ for real numbers, scientists and mathematicians started using $e^x$ as the shorhand symbol for the function $f(x)$ because writing $e^x$ is much easier than writing $3$ or $4$ terms of $f(x)$. And the function's name is not $f(x)$, rather it's $exp(x)$. So, $e^z$ is not $e$ raised to the power $z$, but rather syntactic sugar for this long function $f(z)$. That's why, we should tend to think of $e^{i\pi}$ not as $i\pi$ repeated multiplications of $e$, rather the function $f(x)$ evaluated at $\pi$.
 
 ## Revision of High School Physics
 
@@ -113,13 +113,13 @@ $$
 
 This motion can be described as follows. The body starts out at $1$ on the number line, because $x(0) = e^0 = 1$. At a certain time, $t$, the body will be at a distance of $e^{2t}$ distance from the origin, and the magnitude of its velocity at that instant will be $2e^{2t}$, i.e, the magnitude of its velocity will be *twice* as much as its distance from origin. The further away the body is from the origin, the greater its velocity would be. We can draw the position vector and the velocity vector of the body to see if it's really true (Spoiler alert, it's true).
 
-* INSERT A COOL ANIMATION ON REAL NUMBER LINE *
+![Exponential Motion](/assets/images/posts/complex_numbers/gifs/exponential_motion.gif)
 
 ### Circular Motion
 
 Another topic in physics that I want to touch here is circular motion. Again, you might remember from the high school that whenever a body is moving in a circle in a 2 dimensional space, it's velocity vector is always perpendicular to its position vector. 
 
-* INSERT COOL ANIMATION OF CIRCULAR MOTION SHOWING POSITION AND VELOCITY VECTOR
+![Circular Motion](/assets/images/posts/complex_numbers/gifs/circular_motion.gif)
 
 Those who already know why this is true can skip to the next section. For the rest of you, here's a little calculus explaining this. Let $\vec{r}$ be the position vector of a body and $\vec{v}$ be its velocity vector. If $\vec{r}$ and $\vec{v}$ are orthogonal, then the explanation follows as:
 
@@ -174,7 +174,7 @@ $$
 r(\pi) = e^{i\pi} = -1
 $$
 
-* INSERT COOL ANIMATION SHOWING MOTION FROM 1 + 0I TO -1 + 0I
+![Euler's Formula](/assets/images/posts/complex_numbers/gifs/euler.gif)
 
 Now let's extend this a step further. Since the body has a unit speed, at time $t$, it would have travelled a distance of $t \times 1 = t$, i.e. covered an arc length of $t$ units. 
 
@@ -190,7 +190,7 @@ $$
 r(t) = e^{it} = cos(t) + isin(t)
 $$
 
-* INSERT COOL ANIMATION from going to angle theta
+![Euler's Formula: General Case](/assets/images/posts/complex_numbers/gifs/euler_general.gif)
 
 And that is general form of the Euler's formula. It amazes me how such terrifying looking formulae have such a nice interpretation. As it can be seen, that it's not a coincidence that complex numbers tend to show up in places like electromagetism, simple harmonic motion, quantum mechanics, or any place where circular or periodic motion is a key part. The properties of complex numbers exactly resembles that of periodic motion. That's what makes them an effective tool in studying these topics.
 
