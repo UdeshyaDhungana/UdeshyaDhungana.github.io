@@ -62,7 +62,7 @@ plugins:
 author:
   name   : "Udeshya Dhungana"
   avatar : "/assets/images/bio-photo.jpg"
-  bio    : "Data Science, Research & Teaching"
+  bio    : "Data Science and Mathematics"
   links:
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
@@ -109,11 +109,6 @@ defaults:
       layout: single
       author_profile: true
 
-#comments:
-#  provider: "facebook"
-#  facebook:
-#    num_posts: 5
-#    colorscheme: light
 
 category_archive:
   type: liquid
