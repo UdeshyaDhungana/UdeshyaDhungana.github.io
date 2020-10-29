@@ -1,4 +1,4 @@
 ## My personal blog
 
-Made using Hugo templating engine
+Made using Hugo templating engine  
 Theme: hugo-coder
