@@ -1,18 +1,11 @@
----
-title: "Vim for development" 
-toc: true
-excerpt: Learn how to harness Vim's speed and keybindings to boost your productivity!
-categories:
-   - Productivity
-tags:
-  - vim
-  - neovim
-  - text editor
-header:
-  teaser: ../assets/images/posts/neovim.png
----
++++
+date = "2020-08-12"
+title = "Vim for development"
+tags = ["vim", "neovim", "text editor"]
+categories = ["Productivity"]
++++
 
-![Neovim](/assets/images/posts/neovim.png "Neovim")
+![Neovim](/images/posts/neovim.png)
 *My Neovim setup*
 
 As a developer, I have this never ending thirst for productivity. On the journey of quinching this thirst, a few months ago, I stumbled upon a fantastic [lecture](https://www.youtube.com/watch?v=a6Q8Na575qc) on YouTube about Vim. After that, I started to use Vim. It wasn't my first introduction to Vim though. I first came to know about it about an year ago. Still, I hadn't been able to use it as my main editor, because of one big problem: the learning curve. Vim is not easy to learn, but once you get the hang of it, it starts to pay you off. It took me about 20 days to become comfortable with it. So, if you're planning on using it, don't be frustrated in the beginning. It'll test your patience, but you must stand your ground. I assume you are on a Linux system. Let's begin. 

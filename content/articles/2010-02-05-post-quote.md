@@ -1,10 +1,11 @@
 ---
-title: "Post: Quote"
 categories:
-  - Blog
+- Blog
+date: "2010-02-05T00:00:00Z"
 tags:
-  - Post Formats
-  - quote
+- Post Formats
+- quote
+title: 'Post: Quote'
 ---
 
 > Only one thing is impossible for God: To find any sense in any copyright law on the planet.

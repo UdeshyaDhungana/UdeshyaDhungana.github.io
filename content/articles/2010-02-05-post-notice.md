@@ -1,10 +1,11 @@
 ---
-title: "Post: Notice"
 categories:
-  - Blog
+- Blog
+date: "2010-02-05T00:00:00Z"
 tags:
-  - Post Formats
-  - notice
+- Post Formats
+- notice
+title: 'Post: Notice'
 ---
 
 A notice displays information that explains nearby content. Often used to call attention to a particular detail.
@@ -39,7 +40,7 @@ Want to wrap several paragraphs or other elements in a notice? Using Liquid to c
 * Drafts will now auto-save while writing
 {% endcapture %}{% endraw %}
 
-<div class="notice">{% raw %}{{ notice-2 | markdownify }}{% endraw %}</div>
+<div class="notice">{{ notice-2 | markdownify }}</div>
 ```
 
 {% capture notice-2 %}

@@ -1,18 +1,11 @@
----
-title: "The problem with tiktok"
-date: 2020-06-29T18:03:00+05:45
-excerpt: An article on how big of a data stealer Tiktok really is
-header:
-  teaser: ../assets/images/posts/tiktok.jpg
-categories:
-  - Society
-tags:
-  - tiktok
-  - data theft
-  - technology
----
++++ 
+date = "2020-06-29"
+title = "The problem with tiktok"
+tags = ["tiktok", "data theft", "technology"]
+categories = ["Society"]
++++
 
-![Tiktok](/assets/images/posts/tiktok.jpg "Tiktok")  
+![Tiktok](/images/posts/tiktok.jpg)  
 *Tiktok, Image courtesy in the footer*
 
 It was early 2018 when teens all around the world started using an app called Musically. It was a video sharing social media app founded by Alex Zhu, a Chinese entrepreneur . Mainly used for making lip sync videos, the app's popularity skyrockted within months, if not, weeks.   

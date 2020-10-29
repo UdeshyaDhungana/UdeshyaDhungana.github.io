@@ -1,18 +1,13 @@
----
-title: "The elegence of complex numbers" 
-toc: true
-excerpt: Euler's formula explained with high school physics
-categories:
-   - Mathematics
-tags:
-  - maths
-  - complex numbers
-  - euler's formula
-header:
-  teaser: ../assets/images/posts/complex_numbers/euler.jpg
----
++++
+date = "2020-10-14"
+title = "The elegence of complex numbers"
+tags = ["maths", "complex numbers", "euler's formula"]
+categories = ["Mathematics"]
 
-Hey folks, today I want to write about a familiar topic in Higher mathematics, complex numbers, and in particular, the Euler's formula. Complex Numbers show up in a number of different fields, like signal processing, electromagetism, quantum mechanics and many more. Though it's a frequently occuring content, from what I've noticed, both the students and the experts are perplexed by complex numbers. For example, the beginners become puzzled by basic questions such as "What's the meaning of $\sqrt{-1}$ ?" or "Does $\sqrt{-1}$ even exists?" while even the experts don't understand the intuition behind simple formula like Euler's formula, and settle for the explanation provided by hairy equations like Taylor's expansion.
+katex = true
++++
+
+Hey folks, today I want to write about a familiar topic in Higher mathematics, complex numbers, and in particular, the Euler's formula. Complex Numbers show up in a number of different fields, like signal processing, electromagetism, quantum mechanics and many more. Though it's a frequently occuring content, from what I've noticed, both the students and the experts are perplexed by complex numbers. For example, the beginners become puzzled by basic questions such as "What's the meaning of $\sqrt{-1}$ ?" or "Does $\sqrt{-1}$ even exist?" while even the experts don't understand the intuition behind simple formula like Euler's formula, and settle for the explanation provided by hairy equations like Taylor's expansion.
 
 ## Introduction
 
@@ -21,20 +16,23 @@ Complex Numbers are extension to the real numbers. While it is possible to do ma
 First, let's talk about imaginary numbers. The fundamental imaginary number is $i$ which is `defined` to be $\sqrt{-1}$. Notice the stress on the word `defined`, meaning that $i$ is not a computed value. Let's derive a simple and useful property by extending this a step further.  
 
 $$
-i = \sqrt{-1}\\
+i = \sqrt{-1}
+$$
+$$
 i^2 = -1
 $$
 
+
 Now, I want to introduce a little geometry. To include imaginary numbers, we need to extend our traditional real number line, as shown below. The obtained plane is called Complex Plane, or Argand Plane. The number $i$ lies where the position $(0,1)$ would lie on an $x-y$ plane. Any number which take the form $x + iy$ is a complex number. The number $x$ is called the real part while $y$ is called the imaginary part of a complex number. Don't get carried away by the fact that the latter part is called 'imaginary', as you'll see in a while, it is every bit as real as any other numbers you can think of. In the diagram below, the number $z$ can be written as $z = 2 + 1i$
 
-![Imaginary number](/assets/images/posts/complex_numbers/imaginary.png)
+![Imaginary number](/images/posts/complex_numbers/imaginary.png)  
 *Position of a complex number in complex plane*
 
 ## Mathematical Operations
 
 Common operations like addition, subtraction, multiplication apply to complex numbers as well. Adding two complex numbers is fairly simple, you put the tail of the second complex number on the head of the first one, and see where the resulting head of two lands. Subtraction is easy as well. Subtracting a complex number $z = x_1 + iy_1$ from another complex number $w = x_2 + iy_2$ involves flipping the latter one and adding them. As it can be seen, this is like vector addition and subtraction, so to perform these two operations, you'd operate on real and imaginary part independently and combine the result.
 
-![Complex Number Addition](/assets/images/posts/complex_numbers/gifs/addition.gif)
+![Complex Number Addition](/images/posts/complex_numbers/gifs/addition.gif)
 *Additon of complex numbers is just like adding two vectors*
 
 
@@ -51,7 +49,7 @@ for any real number $a$.
 
 Notice here, this is just like algebraic multiplication where you multiply a variable by a number, but, it's even more than that. Notice, on the complex plane, multiplying by $i$ rotates the point by $90^{\circ}$ anticlockwise. This is a valuable observation which we will make use of very often. If we start thinking multiplication by $i$ as $90^{\circ}$ rotation in counterclockwise direction, we can keep consistency between our observation and the fact that $i^2 = -1$ because that would essentially mean $1 \times i \times i$ which, in our context, means a $180^{\circ}$ rotation, which lands at $-1$. Now we can think multiplication by $n^{th}$ power of $i$ as $90 \times n$ degrees rotation in anticlockwise direction.
 
-![Multiplication by $i$](/assets/images/posts/complex_numbers/gifs/multiplication.gif)
+![Multiplication by $i$](/images/posts/complex_numbers/gifs/multiplication.gif)
 *Multiplication by $i$ rotates the point in complex plane by $90^{\circ}$ anticlockwise*
 
 ## Magnitude of a complex number
@@ -62,7 +60,7 @@ $$
 \lVert z \rVert = \sqrt{x^2 + y^2}
 $$
 
-![Magnitude of complex number](/assets/images/posts/complex_numbers/gifs/magnitude.gif)
+![Magnitude of complex number](/images/posts/complex_numbers/gifs/magnitude.gif)
 *Magnitude of Complex Number*
 
 ## Rotation by a certain angle $\theta$ 
@@ -88,9 +86,13 @@ Once again, this is a `definition` of $f(x)$, we don't question its origin, or w
 Now, let's start evaluating the values of $f(x)$ for different values of $x$. Since we cannot compute the sum of infinite number of terms, we approximate the value of $f(x)$ by including only a few terms from beginning as the terms further away from beginning would be really small. Plugging in a few different values, we notice,
 
 $$
-f(1) = 1 + \frac{1}{1} + \frac{1}{2} + \frac{1}{6} + ... \approx 2.71828 = e\\\\
-f(2) = 1 + \frac{2}{1} + \frac{4}{2} + \frac{8}{6} + ... \approx 7.38906 = e^2\\\\
-f(3) = 1 + \frac{3}{1} + \frac{9}{2} + \frac{27}{6} + ... \approx 20.08554 = e^3\\\\
+f(1) = 1 + \frac{1}{1} + \frac{1}{2} + \frac{1}{6} + ... \approx 2.71828 = e
+$$
+$$
+f(2) = 1 + \frac{2}{1} + \frac{4}{2} + \frac{8}{6} + ... \approx 7.38906 = e^2
+$$
+$$
+f(3) = 1 + \frac{3}{1} + \frac{9}{2} + \frac{27}{6} + ... \approx 20.08554 = e^3
 $$
 
 Since, the function $f(x)$ satisfies the relation that $f(x) = e^x$ for real numbers, scientists and mathematicians started using $e^x$ as the shorhand symbol for the function $f(x)$ because writing $e^x$ is much easier than writing $3$ or $4$ terms of $f(x)$. And the function's name is not $f(x)$, rather it's $exp(x)$. So, $e^z$ is not $e$ raised to the power $z$, but rather syntactic sugar for this long function $f(z)$. That's why, we should tend to think of $e^{i\pi}$ not as $i\pi$ repeated multiplications of $e$, rather the function $f(x)$ evaluated at $\pi$.
@@ -113,28 +115,32 @@ $$
 
 This motion can be described as follows. The body starts out at $1$ on the number line, because $x(0) = e^0 = 1$. At a certain time, $t$, the body will be at a distance of $e^{2t}$ distance from the origin, and the magnitude of its velocity at that instant will be $2e^{2t}$, i.e, the magnitude of its velocity will be *twice* as much as its distance from origin. The further away the body is from the origin, the greater its velocity would be. We can draw the position vector and the velocity vector of the body to see if it's really true (Spoiler alert, it's true).
 
-![Exponential Motion](/assets/images/posts/complex_numbers/gifs/exponential_motion.gif)
+![Exponential Motion](/images/posts/complex_numbers/gifs/exponential_motion.gif)
 *Exponential motion: White vector is the body's position vector, and brown one is its velocity vector*
 
 ### Circular Motion
 
 Another topic in physics that I want to touch here is circular motion. Again, you might remember from the high school that whenever a body is moving in a circle in a 2 dimensional space, it's velocity vector is always perpendicular to its position vector. 
 
-![Circular Motion](/assets/images/posts/complex_numbers/gifs/circular_motion.gif)
+![Circular Motion](/images/posts/complex_numbers/gifs/circular_motion.gif)
 *Circular Motion: Notice that the velocity vector is perpendicular to its position vector (vector from origin to the body)*
 
 Those who already know why this is true can skip to the next section. For the rest of you, here's a little calculus explaining this. Let $\vec{r}$ be the position vector of a body and $\vec{v}$ be its velocity vector. If $\vec{r}$ and $\vec{v}$ are orthogonal, then the explanation follows as:
 
 $$
-\implies \vec{r} \cdot \frac{d\vec{r}}{dt} = 0\\
-
-\implies \frac{d}{dt}(\vec{r} \cdot \vec{r}) = 0\\
-
-\implies \vec{r} \cdot \vec{r} = c^2\\
-
-\implies r^2 = c^2\\
-
-\implies \lVert r \rVert  = c\\
+\implies \vec{r} \cdot \frac{d\vec{r}}{dt} = 0
+$$
+$$
+\implies \frac{d}{dt}(\vec{r} \cdot \vec{r}) = 0
+$$
+$$
+\implies \vec{r} \cdot \vec{r} = c^2
+$$
+$$
+\implies r^2 = c^2
+$$
+$$
+\implies \lVert r \rVert  = c
 $$
 
 We can see that the magnitude of it's position vector remains constant, i.e., the body is at a constant distance from the origin. This clearly suggests that the body is travelling in a circle centered at origin.
@@ -150,7 +156,9 @@ $$
 Since our calculation involves complex numbers, we should use complex plane to show the position and velocity of the body. Notice that in the beginning, or at $t = 0$, the body is at $1 + 0i$. Now, the velocity of the body would be
 
 $$
-v(t) = i e^{it}\\
+v(t) = i e^{it}
+$$
+$$
 v(t) = i \cdot r(t)
 $$
 
@@ -176,7 +184,7 @@ $$
 r(\pi) = e^{i\pi} = -1
 $$
 
-![Euler's Formula](/assets/images/posts/complex_numbers/gifs/euler.gif)
+![Euler's Formula](/images/posts/complex_numbers/gifs/euler.gif)
 *Physical interpretation behind Euler's formula*
 
 Now let's extend this a step further. Since the body has a unit speed, at time $t$, it would have travelled a distance of $t \times 1 = t$, i.e. covered an arc length of $t$ units. 
@@ -193,7 +201,7 @@ $$
 r(t) = e^{it} = cos(t) + isin(t)
 $$
 
-![Euler's Formula: General Case](/assets/images/posts/complex_numbers/gifs/euler_general.gif)
+![Euler's Formula: General Case](/images/posts/complex_numbers/gifs/euler_general.gif)
 *General case of the euler's formula*
 
 
