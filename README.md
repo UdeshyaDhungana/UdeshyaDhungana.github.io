@@ -1,4 +1,6 @@
-## My personal blog
+## My blog site
 
-Made using Hugo templating engine  
-Theme: hugo-coder
+- Made using Hugo site generator
+- Theme: `hugo-coder`
+
+© Udeshya 2020
