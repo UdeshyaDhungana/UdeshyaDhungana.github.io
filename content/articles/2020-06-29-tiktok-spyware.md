@@ -3,6 +3,7 @@ date = "2020-06-29"
 title = "The problem with tiktok"
 categories = ["Society"]
 tags = ["tiktok", "data theft", "technology"]
+featuredImage = "/images/posts/tiktok.jpg"
 +++
 
 ![Tiktok](/images/posts/tiktok.jpg)  

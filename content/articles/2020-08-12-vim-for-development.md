@@ -3,6 +3,7 @@ date = "2020-08-12"
 title = "Vim for development"
 tags = ["vim", "neovim", "text editor"]
 categories = ["Productivity"]
+featuredImage = "/images/posts/neovim.png"
 +++
 
 ![Neovim](/images/posts/neovim.png "Neovim")
