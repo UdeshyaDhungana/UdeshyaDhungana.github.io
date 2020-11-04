@@ -15,6 +15,7 @@ pygmentscodefencesguesssyntax = true
 
 #Comments settings
 [params.utteranc]
+  enable = true
   repo = "UdeshyaDhungana/UdeshyaDhungana.github.io" # https://utteranc.es/#heading-repository
   issueTerm = "pathname" # https://utteranc.es/#heading-mapping
   label = "Comment" # https://utteranc.es/#heading-issue-label
