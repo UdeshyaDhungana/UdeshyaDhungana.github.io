@@ -1,0 +1,50 @@
+#+TITLE: Linear Regression
+#+DATE: 2021-05-04
+#+TAGS[]: maths, linear regression, machine learning, computer science
+#+CATEGORIES[]: Mathematics, Computer Science
+#+MATH: true
+
+Hello, today I wanted to write about Linear Regression. It is basically the "Hello, World" program of Machine Learning.
+It is used to model the relationship between one or more inputs and a single output. It is used in engineering,
+business, and various other fields. Since it is a process of learning from data, more the data, more the accuracy of model.
+Regarding the algorithm, we have a set of input ($X$) and their corresponding outputs ($Y$). From this,we try to come up with
+an equation that best fits the data. Then, we can use that equation to predict the output for new inputs.
+
+There are mainly two ways to solve a linear regression problem. They are
+
+ - Least Mean Square Algorithm
+ - Normal Equations
+
+Both of these will be explained in the article, but first, let us state the problem a bit more clearly to avoid any confusion.
+Our dataset consists a $n$ items, where each item has a set of $d$ features, $x$, and a corresponding output, $y$. Our goal is to
+create a hypothesis function, $h$, that maps a new input item $x$ to its corresponding output $y$. Since this is a linear regression problem,
+it is obvious to think that the hypothesis function produces the outputs by /linear combination/ of input, i.e. the hypothesis function
+scales each feature by some amount and adds them along with a constant term. We will denote the scaling factors and constants by $\theta$, commonly
+known as, /parameters/. Our hypothesis function looks like this:
+
+
+$$
+h(x) = \sum_{i=0}^{d} \theta_{i} x_{i}
+$$
+
+
+Now our goal is to find these parameters.
+
+* Least Mean Square (LMS) Algorithm
+
+In this algorithm, we define an error function $J(\theta)$, that is an indicator of the degree of error present in our model. The lower the value of $J(\theta)$,
+the better values of parameters we have. So, we will have obtained the best fit if the error is as low as possible. The best choice of error function
+is the following function:
+
+
+$$
+J(\theta) = \frac{1}{2}  \sum_{i=1}^{n} (h(x^{(i)}) - y^{(i)})^{2}
+$$
+
+There are other error functions as well, but we will use this function. It effectively captures the error present in our model because each term
+in the series is the squared difference between the true value of $y$ and our prediction $h(x)$. Hence, larger the difference, larger the error.
+Notice that if we don't include the square, the positive and negative difference may cancel out, the error may be reduced, but difference still exists.
+So, it is important to remove both overprediction and underprediction.
+
+Since this has been reduced to a minimization problem, we can use calculus to make our work easier. Remember that our goal is to adjust the parameters,
+$\theta$, to have optimum value.
