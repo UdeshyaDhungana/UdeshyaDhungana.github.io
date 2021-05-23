@@ -63,7 +63,7 @@ Now, our goal is to find these $\theta$'s.
   choice of error function is the following function:
 
 
-  $$ J(\theta) = \frac{1}{2} \sum_{i=1}^{n} (h(x^{(i)}) - y^{(i)})^{2}
+  $$ J(\theta) = \frac{1}{2n} \sum_{i=1}^{n} (h(x^{(i)}) - y^{(i)})^{2}
   $$
 
   There are other error functions as well, but we will use this
@@ -84,20 +84,25 @@ Now, our goal is to find these $\theta$'s.
   cost considering all the training examples. For a single training
   example, the cost is given as:
 
-  $$ J_i(\theta) = \frac{1}{2} (h(x^{(i)}) - y^{(i)})^{2} $$
+  $$ J_i(\theta) = \frac{1}{2n} (h(x^{(i)}) - y^{(i)})^{2} $$
 
   The derivative of this function with respect to a particular
   $\theta_{j}$ is given as
 
   $$ \frac{\partial }{\partial \theta_{j}} J_i(\theta) =
-  \frac{\partial}{\partial \theta_{j}} \frac{1}{2} (h(x^{(i)}) -
+  \frac{\partial}{\partial \theta_{j}} \frac{1}{2n} (h(x^{(i)}) -
   y^{(i)})^2 $$
 
   We must update the values of $\theta{j}$:
 
-  $$ \theta_{j} := \theta_{j} - \alpha \frac{\partial}{\partial
-  \theta_{j}} J(\theta) $$ $$ \theta_{j} := \theta_{j} + \alpha
-  (y^{(i)} - h(x^{(i)})) \space x_{j}^{(i)} $$
+  $$
+  \theta_{j} := \theta_{j} - \alpha \frac{\partial}{\partial
+  \theta_{j}} J(\theta)
+  $$
+  $$
+  \theta_{j} := \theta_{j} + \frac{\alpha}{n}
+  (y^{(i)} - h(x^{(i)})) \space x_{j}^{(i)}
+  $$
 
   Here, $\alpha$ is the learning rate. Suitable value of $\alpha$ should
   be chosen. If it is too small, convergence may take more
@@ -111,7 +116,7 @@ Now, our goal is to find these $\theta$'s.
   algorithm for this is
 
   $Repeat\space until\space convergence\space$ { $$ \theta_{j} :=
-  \theta_{j} + \alpha \sum_{i=1}^n \space(y^{(i)} - h(x^{(i)})) \space
+  \theta_{j} + \frac{\alpha}{n} \sum_{i=1}^n \space(y^{(i)} - h(x^{(i)})) \space
   x_{j}^{(i)}, \quad (for\space every\space j) $$ }
 
   On the other hand, if we updae the values of $\theta$s by only looking
@@ -122,7 +127,7 @@ Now, our goal is to find these $\theta$'s.
 
 
   $\quad for\space i = 1\space to\space n$ { $$ \theta_{j}
-  := \theta_{j} + \alpha (y^{(i)} - h(x^{(i)})) \space x_{j}^{(i)},
+  := \theta_{j} + \frac{\alpha}{n} (y^{(i)} - h(x^{(i)})) \space x_{j}^{(i)},
   \quad (for\space every\space j) $$ $\quad$}
 
   }
@@ -133,7 +138,8 @@ Now, our goal is to find these $\theta$'s.
   to calculate the summation term. So, this method is slower than
   stochastic GD, which updates the value of theta looking at just one
   training example at a time. This can speed up convergence. For faster
-  calculation, we must [[https://en.wikipedia.org/wiki/Vectorization][vectorize]] the entire operation.
+  calculation, we must [[https://en.wikipedia.org/wiki/Vectorization][vectorize]] the entire operation. I will show this in
+  the implementation section.
 
 * Normal Equations
 
@@ -368,8 +374,55 @@ Now, our goal is to find these $\theta$'s.
     functions like =numpy.linalg.pinv= in python, or =pinv= in matlab.
 
 ** Implementation
-*** TODO Programming
+*** Coding
+    This is our initial data
+    #+BEGIN_EXPORT html
+    <img src="/images/posts/linear_regression/initial.png">
+    #+END_EXPORT
 
+**** Gradient Descent
+     You need to read the ==X== and ==Y== variables from some file using a library like [[https://pandas.pydata.org/][Pandas]] and convert them to
+     numpy array. Also, you need to augment the ==X== variable with a column of ==1== to make the number
+     of columns of ==X== same as that of the number of rows of ==theta==. Here is a gradient
+     descent function for linear regression in python using ==numpy== library.
+     #+BEGIN_SRC python
+       import numpy as np
+
+       def gradient_descent(X, Y, theta, learning_rate, num_iters):
+           n = np.shape(X)[0]
+           for i in range(num_iters):
+               # calculate the current prediction
+               prediction = np.matmul(X, theta)
+               # obtain the error
+               error_vector = Y - prediction
+               # Update the thetas. Here I've vectorized the operation of updating thetas
+               # try matching dimensions of multiplied matrices to understand the operation
+               theta = theta + learning_rate/n * np.matmul(np.transpose(X), error_vector)
+               return theta
+     #+END_SRC
+     Here is the result from gradient descent:
+     #+BEGIN_EXPORT html
+     <img src="/images/posts/linear_regression/gradient.png">
+     #+END_EXPORT
+
+**** Normal Equations
+     This algorithm is easier than the Gradient Descent one. It is only the matter of matrix manipulation.
+     Here is a python function for normal equations.
+     #+BEGIN_SRC python
+       import numpy as np
+       def normal_equations(X, Y):
+           X_T = np.transpose(X)
+           intermediate = np.linalg.pinv(np.matmul(X_T, X))
+           return np.matmul(np.matmul(intermediate, X_T), Y)
+     #+END_SRC
+     This predictor is what normal equations yield on our data.
+     #+BEGIN_EXPORT html
+     <img src="/images/posts/linear_regression/normal_eqn.png">
+     #+END_EXPORT
+
+     As you can see both algorithms perform equally good. It is because our data set is small and gradient descent
+     reaches the minimum value quickly. And I've used sufficient number of iterations (> 3000) for our purpose.
+     If we'd used less number of iterations we may have gotten less accurate model.
 
 *** How to make a higher dimensional predictor?
 
