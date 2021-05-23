@@ -109,5 +109,3 @@ necessary ones. Good luck on your Vim journey.
 Vim is a powerful and fast text editor. Though learning it may require
 some time and extra effort, it's knowledge will certainly pay you off
 with increased productivity.
-
-Peace ✌️ ☮️

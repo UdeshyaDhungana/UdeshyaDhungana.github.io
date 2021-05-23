@@ -318,5 +318,3 @@ saying as a fact, but rather work things out and see if it's true
 yourself. As someone once said
 
 > The purpose of Mathematics is insight, not numbers.
-
-Peace ✌️ ☮️
