@@ -48,10 +48,10 @@ pygmentscodefencesguesssyntax = true
     # "auto" (use preference set by browser)
     # "dark" (dark background, light foreground)
     # "light" (light background, dark foreground) (default)
-    colorscheme = "auto"
+    colorscheme = "light"
 
     # Hide the toggle button, along with the associated vertical divider
-    hidecolorschemetoggle = false
+    hidecolorschemetoggle = true
 
     # Series see also post count
     maxSeeAlsoItems = 5
