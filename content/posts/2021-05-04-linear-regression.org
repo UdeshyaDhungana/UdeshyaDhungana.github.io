@@ -210,12 +210,12 @@ Now, our goal is to find the elements of $\theta$.
     $\newline$
 
     [[https://en.wikipedia.org/wiki/Row_and_column_spaces][Column Space]] of a matrix is the subspace formed by the column vectors
-    of the matrix. For a matrix $\begin{bmatrix}1 & 2\\3 & 4\end{bmatrix}$,
+    of the matrix. For a matrix $\begin{bmatrix}1 & 3\\2 & 4\end{bmatrix}$,
     its columnspace is $\mathcal{R}^{2}$. Since the columns of this matrix,
     $\begin{bmatrix}1 \\ 2 \end{bmatrix}$ and $\begin{bmatrix}3 \\ 4 \end{bmatrix}$ can /reach/ the entire
     $\mathcal{R}^{2}$. Whereas, for a matrix $\begin{bmatrix}1 & 0 & 1\\0 & 1 & 1\\0 & 0 & 0\end{bmatrix}$,
     the columnspace is the $x-y$ plane inside $\mathcal{R}^{3}$. It is not $\mathcal{R}^{3}$
-    because the linear combination only yields the vector of the
+    because the linear combination of all columns only yields the vector of the
     form $\begin{bmatrix}a\\b\\0\end{bmatrix}$. The third column can be constructed
     as $1 \cdot (Column 1) + 1 \cdot (Column 2)$. So it does not help in the construction
     of columnspace.
