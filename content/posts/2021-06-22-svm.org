@@ -1,0 +1,32 @@
+* Support Vector Machines (SVM)
+
+  In this article, I will try to cover the mathematics and intuition
+  behind one of the classic Machine Learning algorithms, Support
+  Vector Machines, abbreviated as SVM. This algorithm, unlike linear
+  regression, is used to classify data into differnet classes. For
+  example, whether a tumor is malignant or benign, whether or not a
+  customer will pay back loans to the bank, and did I do your mum last
+  night, etc. are some examples of classification problem.  The
+  classification problem involving two classes is called a binary
+  classification problem, whereas the ones involving more than two are
+  referred to as multiclass classification problem.
+
+  In its most simple form, SVM does not support multiclass
+  classification. It supports binary classification only. So, without
+  further ado, let us understand the algorithm.
+
+
+** Prelude
+
+   To classify the dataset into two groups, there must be some kind of
+   a boundary separating them which serves as a 'border' between the two groups.
+   The training examples which lie on one side of the border are negative and the
+   ones on the order side are positive. Pictorially, this can be shown as:
+
+    #+BEGIN_EXPORT html
+    <figure>
+    <img src="/images/posts/svm/classifier.png">
+    <figcaption> Binary Classification </figcaption>
+    &nbsp;
+    </figure>
+    #+END_EXPORT
