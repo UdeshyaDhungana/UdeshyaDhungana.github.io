@@ -1,6 +1,5 @@
-## My blog site
+## My blog website
 
-- Made using Hugo site generator
-- Theme: `hugo-coder`
+- Made using Emacs
 
 © Udeshya 2020

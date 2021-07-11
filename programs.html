@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2021-07-11 Sun 12:19 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Programs I Use</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Udeshya Dhungana" />
+<meta name="description" content="A short list of my favorite computer programs"
+ />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" href="./css/layout.css">
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Programs I Use</h1>
+<hr />
+<p>
+<a href="./index.html">Home</a>
+</p>
+<hr />
+
+<p>
+I've been hooked to terminal based applications for quite a while
+now. They are fast, and a lot flexible compared to GUI
+programs. That's not to say I completely avoid GUI applications. Both
+have their pros and cons. I think identifying the pros of both sides
+and developing the ability to harness them is best choice for the
+user.
+</p>
+
+<div id="outline-container-org36abcd9" class="outline-2">
+<h2 id="org36abcd9">Operating System</h2>
+<div class="outline-text-2" id="text-org36abcd9">
+<p>
+I use <a href="https://www.archlinux.org/">Arch Linux</a>. It's a lightweight and flexible Linux
+distribution. It provides packages in a rolling release model. So, I
+wouldn't recommend it to you if you are a beginner linux user.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb81f589" class="outline-2">
+<h2 id="orgb81f589">Terminal emulator</h2>
+<div class="outline-text-2" id="text-orgb81f589">
+<p>
+<a href="https://github.com/alacritty/alacritty">Alacritty</a> is one of the fastest out there. It's also highly
+customizable, and it supports unicode fonts. I am using <a href="https://konsole.kde.org/">Konsole</a>
+these days because it integrates well with KDE.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org25dd09e" class="outline-2">
+<h2 id="org25dd09e">Shell</h2>
+<div class="outline-text-2" id="text-org25dd09e">
+<p>
+I use <a href="https://www.zsh.org/">zsh</a> with <a href="https://github.com/ohmyzsh/ohmyzsh">oh-my-zsh</a> configuration manager.  There are countless
+themes and plugins available for zsh. I've used bash in the past,
+but once you start using zsh, believe me, you'll never go back.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd1c86d2" class="outline-2">
+<h2 id="orgd1c86d2">Window Manager / Desktop Environment</h2>
+<div class="outline-text-2" id="text-orgd1c86d2">
+<p>
+Some days I use <a href="https://i3wm.org/">i3</a> window manager, other days, I use <a href="https://kde.org/">KDE</a>.
+i3 is highly customizable and very well documented. It's a great choice
+if you don't want to deal with mouse that much and like getting things done
+from keyboard.
+</p>
+
+<p>
+Speaking of KDE, it's a customizable and lightweight Desktop
+Environment.  I used to use <a href="https://www.xfce.org/">XFCE</a> but switched to KDE because of its
+aesthetics and ecosystem.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgbacc555" class="outline-2">
+<h2 id="orgbacc555">Text editor</h2>
+<div class="outline-text-2" id="text-orgbacc555">
+<p>
+<a href="https://www.vim.org/">Vim</a>, the greatest text editor ever made. Believe me, you'll never regret learning
+vim.
+</p>
+
+<p>
+<a href="https://www.gnu.org/software/emacs/">Emacs</a> is my IDE these days. Even this website was made using emacs!
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgda346a7" class="outline-2">
+<h2 id="orgda346a7">Web browser</h2>
+<div class="outline-text-2" id="text-orgda346a7">
+<p>
+I'm concerned about my online privacy, so I use <a href="https://brave.com/">Brave</a>. It's a
+privacy focused browser based on chromium engine. It comes with
+prebuilt ad blocker. I occasionally use <a href="https://www.mozilla.org/en-US/firefox/new/">Firefox</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcd0f2cb" class="outline-2">
+<h2 id="orgcd0f2cb">File manager</h2>
+<div class="outline-text-2" id="text-orgcd0f2cb">
+<p>
+I use <a href="https://github.com/jarun/nnn">nnn</a>. It's a terminal based file manager that comes with many
+useful functionalities like bulk renaming, regex search, etc.
+</p>
+
+<p>
+Nothing beats <a href="https://apps.kde.org/dolphin/">Dolphin</a> amongst the GUI file managers. Give it a try!
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgdbbe0d3" class="outline-2">
+<h2 id="orgdbbe0d3">Media player</h2>
+<div class="outline-text-2" id="text-orgdbbe0d3">
+<p>
+I use <a href="https://mpv.io/">mpv</a>. It can play music, videos, and yes, it can even stream
+YouTube videos. It's faster than VLC.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2a1a848" class="outline-2">
+<h2 id="org2a1a848">RSS reader</h2>
+<div class="outline-text-2" id="text-org2a1a848">
+<p>
+I don't use social media a lot. For keeping up with the news, I
+use an RSS reader, specifically <a href="https://newsboat.org/">Newsboat</a>. Read more about RSS <a href="https://en.wikipedia.org/wiki/RSS">here</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3f2842a" class="outline-2">
+<h2 id="org3f2842a">Torrent client</h2>
+<div class="outline-text-2" id="text-org3f2842a">
+<p>
+I use <a href="https://www.qbittorrent.org/">qBittorrent</a>. It's free and open source, has no ads, and works
+perfectly.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org510d347" class="outline-2">
+<h2 id="org510d347">PDF viewer</h2>
+<div class="outline-text-2" id="text-org510d347">
+<p>
+<a href="https://pwmt.org/projects/zathura/">Zathura</a>. It supports PDF, postscript, DJVU, and many other file
+formats through plugins. It has keyboard bindings, so no mouse is
+needed. Also, it's highly customizable.
+</p>
+
+<p>
+<a href="https://okular.kde.org/">Okular</a> is undefeated amongst open source PDF viewers. It's much more
+than a PDF viewer.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge28021c" class="outline-2">
+<h2 id="orge28021c">Image viewer</h2>
+<div class="outline-text-2" id="text-orge28021c">
+<p>
+I use <a href="https://feh.finalrewind.org/">feh</a> for casual image viewing. It is light and powerful. It is
+just for viewing images. For editing images, I use <a href="https://www.gimp.org/">GIMP</a>.
+</p>
+</div>
+</div>
+</div>
+</body>
+</html>
