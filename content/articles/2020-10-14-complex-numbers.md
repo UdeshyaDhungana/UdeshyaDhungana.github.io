@@ -2,7 +2,6 @@
 date = "2020-10-14"
 title = "The elegence of complex numbers"
 tags = ["maths", "complex numbers", "euler's formula"]
-categories = ["Mathematics"]
 katex = true
 +++
 

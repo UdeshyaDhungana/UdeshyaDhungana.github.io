@@ -2,7 +2,6 @@
 date = "2020-08-12"
 title = "Vim for development"
 tags = ["vim", "neovim", "text editor"]
-categories = ["Productivity"]
 +++
 
 As a developer, I have this never ending thirst for productivity. On

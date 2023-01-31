@@ -1,7 +1,6 @@
 #+TITLE: Linear Regression
 #+DATE: 2021-05-04
 #+TAGS[]: maths, linear regression, machine learning, computer science
-#+CATEGORIES[]: Mathematics, Computer Science
 #+MATH: true
 
 Hello. Today I want to write about Linear Regression. It is basically
