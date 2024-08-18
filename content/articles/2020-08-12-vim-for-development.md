@@ -1,10 +1,9 @@
 +++
 date = "2020-08-12"
-title = "Vim for development"
-tags = ["vim", "neovim", "text editor"]
+title = "Using Neovim for programming"
 +++
 
-As a developer, I have this never ending thirst for productivity. On
+As a programmer, I have this never ending thirst for productivity. On
 the journey of quinching this thirst, a few months ago, I stumbled
 upon a fantastic
 [lecture](https://www.youtube.com/watch?v=a6Q8Na575qc) on YouTube
@@ -29,13 +28,13 @@ here comes the most difficult task: make your fingers learn Vim. Use
 it as your main editor for next couple of weeks, or even a month. The
 point is, you need to be comfortable with it. It won't be easy. You'll
 struggle. You may even want to break your keyboard at some
-point. You'll beg yourself to stop and go back to VsCode. But, please
+point. You'll beg yourself to stop and go back to VSCode. But, please
 don't. Here's a little motivation from Bojack Horseman:
 
 > It gets easier. Every day it gets a little easier. But you gotta do
 > it every day, that's the hard part. But it does get easier.
 
-## Making Vim your IDE
+## Making Neovim your IDE
 
 After you're comfortable with moving around, inserting, selecting and
 other fundamental tasks, you should now work on making Vim your

@@ -1,7 +1,6 @@
 +++
 date = "2023-01-08"
 title = "Building Abstractions using Functions"
-tags = ["abstractions", "zerone", "functional programming"]
 katex = true
 +++
 
@@ -34,7 +33,7 @@ function sumCubes(a, b) {
 }
 ```
 
-The next day, your high school cousin asks you to help with her programming homework. Her homework involves writing a function that approximates the value of $\frac{\pi}{8}$ using an infinite series.
+The next day, your high school cousin asks you to help with her programming homework. Her homework involves writing a function that approximates the value of \(\frac{\pi}{8}\) using an infinite series.
 
 $$ \frac{\pi}{8} = \frac{1}{1 \cdot 3} + \frac{1}{5 \cdot 7} + \frac{1}{9 \cdot 11} + \ldots $$
 
@@ -52,7 +51,7 @@ function piSum(a, b) {
 console.log(piSum(1, 50000))
 ```
 
-The terminal prints `0.392696581698726`.It's approximately one-eighth of $\pi$. "Aha!", she smiles and you receive a thank.
+The terminal prints `0.392696581698726`.It's approximately one-eighth of \(\pi\). "Aha!", she smiles and you receive a thank.
 
 You see, you repeated the same functionality thrice. It's not what programming is supposed to be. But, don't be disappointed, we all have made such mistakes at one point in time. Let's start by correcting it.
 
