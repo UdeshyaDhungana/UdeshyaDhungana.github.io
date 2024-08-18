@@ -1,2 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>zerone on Udeshya</title><link>https://udeshyadhungana.github.io/tags/zerone/</link><description>Recent content in zerone on Udeshya</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 08 Jan 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://udeshyadhungana.github.io/tags/zerone/index.xml" rel="self" type="application/rss+xml"/><item><title>Building Abstractions using Functions</title><link>https://udeshyadhungana.github.io/articles/2023-01-08-building-abstractions-with-functions/</link><pubDate>Sun, 08 Jan 2023 00:00:00 +0000</pubDate><guid>https://udeshyadhungana.github.io/articles/2023-01-08-building-abstractions-with-functions/</guid><description>If you have completed yet another 3-hour-long tutorial video on a new programming language and are well aware of basic concepts like variables, loops, functions, and arrays, but don’t know what to do next, well, this article is for you.
-Let us begin with a wishful thinking. Don’t roll your eyes. Programming involves lots and lots of wishful thinkings. Assume that you’re an intern at a renowned company which specializes in numerical computation.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Zerone on A minimal Hugo website</title>
+    <link>http://localhost:1313/tags/zerone/</link>
+    <description>Recent content in Zerone on A minimal Hugo website</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 08 Jan 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/zerone/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Building Abstractions using Functions</title>
+      <link>http://localhost:1313/post/2023/01/08/building-abstractions-using-functions/</link>
+      <pubDate>Sun, 08 Jan 2023 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/post/2023/01/08/building-abstractions-using-functions/</guid>
+      <description>If you have completed yet another 3-hour-long tutorial video on a new programming language and are well aware of basic concepts like variables, loops, functions, and arrays, but don’t know what to do next, well, this article is for you.&#xA;Let us begin with a wishful thinking. Don’t roll your eyes. Programming involves lots and lots of wishful thinkings. Assume that you’re an intern at a renowned company which specializes in numerical computation.</description>
+    </item>
+  </channel>
+</rss>
