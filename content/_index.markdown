@@ -8,7 +8,7 @@ title: Home
 
 ## *Here's a bouquet for you, coz why not?*
 
-I am Udeshya, an associate solutions engineer at [Logpoint](https://www.logpoint.com/en/). I go by the alias of *Iris* online. My fields interest are Computer Security, Operating System, Cloud Computing.
+I am Udeshya, an associate solutions engineer at [Logpoint](https://www.logpoint.com/en/). I go by the alias of *Iris* online. My fields interest are Computer Security, Operating System, and Cloud Computing.
 
 When I am not on my computer, you may find me playing guitar, hiking, or bike riding on the outskirts of Kathmandu.
 
