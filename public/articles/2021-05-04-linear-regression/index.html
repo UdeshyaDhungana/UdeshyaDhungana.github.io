@@ -15,7 +15,7 @@
       
       <li><a href="/">Home</a></li>
       
-      <li><a href="/post/">Articles</a></li>
+      <li><a href="/articles/">Articles</a></li>
       
       <li><a href="/index.xml">RSS</a></li>
       
@@ -66,7 +66,9 @@ every feature would require \(d\) parameters. We also need a constant
 term. So, in total, we need \(d+1\) thetas, subscripted from \(0\) to \(d\),
 where \(\theta_0\) is the constant term. So, our parameter vector and hypothesis function
 looks like this:</p>
-$$ \theta_{(d+1) \times 1} = \begin{bmatrix} \theta_0 \\ \theta_1 \\ \vdots \\ \theta_d \end{bmatrix} $$$$ h(x) = \theta_0 + \sum_{i=1}^{d} \theta_{i} x_{i} $$<p>Now, our goal is to find the elements of \(\theta\).</p>
+$$ \theta_{(d+1) \times 1} = \begin{bmatrix} \theta_0 \\ \theta_1 \\ \vdots \\ \theta_d \end{bmatrix} $$<p>
+</p>
+$$ h(x) = \theta_0 + \sum_{i=1}^{d} \theta_{i} x_{i} $$<p>Now, our goal is to find the elements of \(\theta\).</p>
 <h2 id="gradient-descent">Gradient Descent</h2>
 <p>It is an algorithm to find these parameters. Here, we
 define a loss function \(J(\theta)\), that is an indicator of the
@@ -99,7 +101,9 @@ $$ \frac{\partial }{\partial \theta_{j}} J_i(\theta) =
 $$
   \theta_{j} := \theta_{j} - \alpha \frac{\partial}{\partial
   \theta_{j}} J(\theta)
-  $$$$
+  $$<p>
+</p>
+$$
   \theta_{j} := \theta_{j} + \frac{\alpha}{n}
   (y^{(i)} - h(x^{(i)})) \space x_{j}^{(i)}
   $$<p>This should be done for all the values of \(j\). Here, \(\alpha\) is the learning rate.
@@ -193,7 +197,7 @@ because the linear combination of all columns only yields the vector of the
 form \(\begin{bmatrix}a\\b\\0\end{bmatrix}\). The third column can be constructed
 as \(1 \cdot (Column 1) + 1 \cdot (Column 2)\). So it does not help in the construction
 of columnspace.</p>
-<h2 id="the-meaning-of-ax--b">The meaning of \(Ax = b\)</h2>
+<h2 id="the-meaning-of">The meaning of \(Ax = b\)</h2>
 <p>Now let&rsquo;s understand the meaning of \(Ax = b\). Here \(A\) is a matrix,
 \(x\) is a vector and \(b\) is another vector.
 The matrix multiplication \(Ax\) is essentially the linear

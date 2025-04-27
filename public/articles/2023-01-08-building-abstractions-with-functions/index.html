@@ -15,7 +15,7 @@
       
       <li><a href="/">Home</a></li>
       
-      <li><a href="/post/">Articles</a></li>
+      <li><a href="/articles/">Articles</a></li>
       
       <li><a href="/index.xml">RSS</a></li>
       
@@ -88,8 +88,7 @@ console.log(piSum(1, 50000))
 </code></pre>
 <p>This function takes two integers, <code>a</code>, <code>b</code>, the lower and upper limits, and two functions, one which calculates the current term in the sum, and the other one which calculates the new value of the iterator.</p>
 <blockquote>
-<p>Yes, functions can take other functions as arguments. That&rsquo;s one of the main points of this article. Almost all programming languages have such mechanism. Now, I&rsquo;ll show how you can create abstraction using functions.</p>
-</blockquote>
+<p>Yes, functions can take other functions as arguments. That&rsquo;s one of the main points of this article. Almost all programming languages have such mechanism. Now, I&rsquo;ll show how you can create abstraction using functions.</p></blockquote>
 <p>This <code>sum</code> function we just wrote is equivalent to this mathematical expression.</p>
 $$  \sum_{i=a}^{b} f(a) $$<p>Not just that, our <code>sum</code> function is even more powerful than this, because it can skip iterations because of the <code>nextFn</code> argument. You&rsquo;ll see what that means in a while.</p>
 <p>Let us consider writing the <code>sumIntegers</code> function using the sum function we have defined above.</p>
@@ -205,11 +204,9 @@ let mystery = names
 <p>Sigh! We built quite some abstractions there. Building abstraction using functions is an interesting topic in Computer Science. There is also a programming paradigm in CS called Functional Programing which involves building programs solely by applying and composing functions.</p>
 <p>If you&rsquo;re interested in learning about this topic, you can explore further using these resources.</p>
 <blockquote>
-<p><a href="https://www.amazon.com/Structure-Interpretation-Computer-Programs-Engineering/dp/0262510871">Structure and Interpretation of Computer Programs</a></p>
-</blockquote>
+<p><a href="https://www.amazon.com/Structure-Interpretation-Computer-Programs-Engineering/dp/0262510871">Structure and Interpretation of Computer Programs</a></p></blockquote>
 <blockquote>
-<p><a href="https://www.goodreads.com/en/book/show/25587599-haskell-programming-from-first-principles">Haskell Programming from First Principles</a></p>
-</blockquote>
+<p><a href="https://www.goodreads.com/en/book/show/25587599-haskell-programming-from-first-principles">Haskell Programming from First Principles</a></p></blockquote>
 <p>&ldquo;Post proelium, praemium.&rdquo;</p>
 
 </main>
