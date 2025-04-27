@@ -1,5 +1,5 @@
 <!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linear Regression | A minimal Hugo website</title>
-<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/post/>Articles</a></li><li><a href=/index.xml>RSS</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>Linear Regression</span></h1><h2 class=date>2021/05/04</h2></div><main><p>Hello. Today I want to write about Linear Regression. It is basically
+<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/articles/>Articles</a></li><li><a href=/index.xml>RSS</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>Linear Regression</span></h1><h2 class=date>2021/05/04</h2></div><main><p>Hello. Today I want to write about Linear Regression. It is basically
 the &ldquo;Hello, World&rdquo; program of Machine Learning. It is used to model
 the relationship between one or more inputs and a single output. Its application
 ranges from engineering to business. It is a process of learning from data.
@@ -27,7 +27,7 @@ factors and constant by \(\theta\). As there are \(d\) features, scaling
 every feature would require \(d\) parameters. We also need a constant
 term. So, in total, we need \(d+1\) thetas, subscripted from \(0\) to \(d\),
 where \(\theta_0\) is the constant term. So, our parameter vector and hypothesis function
-looks like this:</p>$$ \theta_{(d+1) \times 1} = \begin{bmatrix} \theta_0 \\ \theta_1 \\ \vdots \\ \theta_d \end{bmatrix} $$$$ h(x) = \theta_0 + \sum_{i=1}^{d} \theta_{i} x_{i} $$<p>Now, our goal is to find the elements of \(\theta\).</p><h2 id=gradient-descent>Gradient Descent</h2><p>It is an algorithm to find these parameters. Here, we
+looks like this:</p>$$ \theta_{(d+1) \times 1} = \begin{bmatrix} \theta_0 \\ \theta_1 \\ \vdots \\ \theta_d \end{bmatrix} $$<p></p>$$ h(x) = \theta_0 + \sum_{i=1}^{d} \theta_{i} x_{i} $$<p>Now, our goal is to find the elements of \(\theta\).</p><h2 id=gradient-descent>Gradient Descent</h2><p>It is an algorithm to find these parameters. Here, we
 define a loss function \(J(\theta)\), that is an indicator of the
 degree of error present in our model. We define this function in such a way that
 it captures inability of the model. The lower the value of
@@ -53,7 +53,7 @@ example, the cost is</p>$$ J_i(\theta) = \frac{1}{2n} (h(x^{(i)}) - y^{(i)})^{2}
 y^{(i)})^2 $$<p>We must update the value of \(\theta{j}\):</p>$$
 \theta_{j} := \theta_{j} - \alpha \frac{\partial}{\partial
 \theta_{j}} J(\theta)
-$$$$
+$$<p></p>$$
 \theta_{j} := \theta_{j} + \frac{\alpha}{n}
 (y^{(i)} - h(x^{(i)})) \space x_{j}^{(i)}
 $$<p>This should be done for all the values of \(j\). Here, \(\alpha\) is the learning rate.
@@ -129,7 +129,7 @@ the columnspace is the \(x-y\) plane inside \(\mathcal{R}^{3}\). It is not \(\ma
 because the linear combination of all columns only yields the vector of the
 form \(\begin{bmatrix}a\\b\\0\end{bmatrix}\). The third column can be constructed
 as \(1 \cdot (Column 1) + 1 \cdot (Column 2)\). So it does not help in the construction
-of columnspace.</p><h2 id=the-meaning-of-ax--b>The meaning of \(Ax = b\)</h2><p>Now let&rsquo;s understand the meaning of \(Ax = b\). Here \(A\) is a matrix,
+of columnspace.</p><h2 id=the-meaning-of>The meaning of \(Ax = b\)</h2><p>Now let&rsquo;s understand the meaning of \(Ax = b\). Here \(A\) is a matrix,
 \(x\) is a vector and \(b\) is another vector.
 The matrix multiplication \(Ax\) is essentially the linear
 combination of the columns of \(A\). Here&rsquo;s a little demonstration</p>$$
