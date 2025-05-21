@@ -1,0 +1,148 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Understanding Git Internals | Curious...</title>
+<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/articles/>Articles</a></li><li><a href=/index.xml>RSS</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>Understanding Git Internals</span></h1><h2 class=date>2025/05/21</h2></div><main><h1 id=understanding-git-internals>Understanding Git Internals</h1><h1 id=how-does-git-clone-really-work>How does <code>git clone</code> really work?</h1><p>Before starting, I assume you are familiar with git. If you know about commits, branches, remote, cloning, staging and committing, you should be fine. Let’s build upon that.</p><h2 id=section-1-git-storage-model>Section 1: Git Storage Model</h2><p>If you are familiar with the git’s object-based storage model, you can skip this section.</p><p>Git stores the <strong>entire snapshot</strong> of your project each time you commit. This is made possible by its <strong>object-based storage model</strong>. Here are some terms you should know.</p><ul><li><strong>Objects</strong>: Everything Git stores is an object. Each object is uniquely identified by a SHA-1 (or SHA-256) hash and stored in the <code>.git/objects</code> directory.</li><li><strong>Blob (Binary Large Object)</strong>: A blob stores the contents of a single file. It does not store the filename—just the file’s content.</li><li><strong>Tree</strong>: A tree represents a directory. It contains pointers to blobs (files) and other trees (subdirectories), along with names and metadata like file permissions.</li><li><strong>Commit</strong>: A commit points to a tree and contains metadata like the author, timestamp, message, and parent commit(s). It represents a snapshot of the project at a given point in time.</li></ul><p>When you commit a change, git does the following:</p><ul><li><strong>Blobs</strong> are created for the contents of each file in the project.</li><li>A <strong>tree</strong> object is created to map the directory structure and link to those blobs.</li><li>A <strong>commit</strong> object is created pointing to the tree, along with a reference to its parent commit (if any).</li><li>A <strong>ref</strong> (e.g., <code>main</code> or <code>HEAD</code>) is updated to point to the new commit hash.</li></ul><p>All these objects are saved in the <code>.git/objects/</code> directory, compressed using <code>zlib</code> and named after their hash values.</p><p>It is relatively easy to follow how git does so. Do the following</p><pre><code class=language-bash># Make a repo
+mkdir your-repo
+cd your-repo
+
+# create some files
+echo &quot;first file&quot; &gt;&gt; foo.txt
+mkdir bar
+echo &quot;second file&quot; &gt;&gt; bar/baz.txt
+
+# add and commit
+git add .
+git status
+git commit -m &quot;first commit&quot;
+</code></pre><p>Use <code>git log</code> to find the hash of current commit.</p><pre><code class=language-bash>commit 53b1b80d093d7ad66a3f612a56e0215ad9da5952 (HEAD -&gt; main)
+Author: Udeshya Dhungana &lt;udeshyadhungana1@gmail.com&gt;
+Date:   Mon May 19 14:34:36 2025 +0545
+
+    first commit
+</code></pre><p>Let’s observe our commit object inside the <code>.git/objects</code> directory using</p><pre><code class=language-bash>python -c &quot;import zlib,sys;print(zlib.decompress(open(sys.argv[1],'rb').read()).decode())&quot; .git/objects/53/b1b80d093d7ad66a3f612a56e0215ad9da5952
+</code></pre><p>Make sure to insert a slash after the first two characters of the <code>SHA1</code> hash. It is how git stores them. We are using <code>zlib</code> to decompress the object file and read its contents because Git stores object using the <code>zlib</code> compression. The name of the commit (or the sha1 sum) is the sha1 sum of <strong>all</strong> the contents inside the commit object (including headers).</p><pre><code class=language-bash>commit 203tree 377295adbf4e9f01892fd377e467549b38adc16b
+author Udeshya Dhungana &lt;udeshyadhungana1@gmail.com&gt; 1747644576 +0545
+committer Udeshya Dhungana &lt;udeshyadhungana1@gmail.com&gt; 1747644576 +0545
+
+first commit
+</code></pre><p>You can read this, but let’s see what’s going on by passing it through <code>hexdump</code>.</p><pre><code class=language-bash>00000000  63 6f 6d 6d 69 74 20 32  30 33 00 74 72 65 65 20  |commit 203.tree |
+00000010  33 37 37 32 39 35 61 64  62 66 34 65 39 66 30 31  |377295adbf4e9f01|
+00000020  38 39 32 66 64 33 37 37  65 34 36 37 35 34 39 62  |892fd377e467549b|
+00000030  33 38 61 64 63 31 36 62  0a 61 75 74 68 6f 72 20  |38adc16b.author |
+00000040  55 64 65 73 68 79 61 20  44 68 75 6e 67 61 6e 61  |Udeshya Dhungana|
+00000050  20 3c 75 64 65 73 68 79  61 64 68 75 6e 67 61 6e  | &lt;udeshyadhungan|
+00000060  61 31 40 67 6d 61 69 6c  2e 63 6f 6d 3e 20 31 37  |a1@gmail.com&gt; 17|
+00000070  34 37 36 34 34 35 37 36  20 2b 30 35 34 35 0a 63  |47644576 +0545.c|
+00000080  6f 6d 6d 69 74 74 65 72  20 55 64 65 73 68 79 61  |ommitter Udeshya|
+00000090  20 44 68 75 6e 67 61 6e  61 20 3c 75 64 65 73 68  | Dhungana &lt;udesh|
+000000a0  79 61 64 68 75 6e 67 61  6e 61 31 40 67 6d 61 69  |yadhungana1@gmai|
+000000b0  6c 2e 63 6f 6d 3e 20 31  37 34 37 36 34 34 35 37  |l.com&gt; 174764457|
+000000c0  36 20 2b 30 35 34 35 0a  0a 66 69 72 73 74 20 63  |6 +0545..first c|
+000000d0  6f 6d 6d 69 74 0a 0a                              |ommit..|
+000000d7
+</code></pre><p>This shows that a commit object is stored like this:</p><pre><code class=language-bash>commit&lt;space&gt;&lt;size_of_file_after_00&gt;00&lt;content&gt;
+</code></pre><p>The content is laid out as follows. Please note double newlines after committer line and the message line. If the commit has a parent tree, it is in between the author line and tree line.</p><pre><code>tree&lt;space&gt;&lt;20_byes_of_sha1_pointing_the_tree_object&gt;\n
+author&lt;space&gt;&lt;author_name&gt;&lt;space&gt;&lt;mail_wrapped_in_angle brackets&gt;&lt;space&gt;&lt;time and timezone&gt;\n
+committer&lt;space&gt;&lt;committer name&gt;&lt;space&gt;&lt;mail wrapped in angles&gt;&lt;space&gt;&lt;time and timezone&gt;\n\n
+commit message\n\n
+</code></pre><p>The SHA1 hash is the hash of the tree object (snapshot of the repo at the time of commit).</p><p>Let us see the details of that tree using <code>git ls-tree sha1</code></p><pre><code>040000 tree 5b927967da7802a015477771744c25136ff6df61	bar
+100644 blob 303ff981c488b812b6215f7db7920dedb3b59d9a	foo.txt
+</code></pre><p>This indicates that at the time of commit, there was a file named <code>foo.txt</code> and a directory <code>bar</code>. To see what is inside <code>bar</code>, let us use <code>ls-tree</code> on the sha1 hash of the <code>bar</code> directory.</p><pre><code>100644 blob 1c59427adc4b205a270d8f810310394962e79a8b	baz.txt
+</code></pre><p>It reveals that the <code>bar</code> directory at the time of commit had a <code>baz.txt</code> inside it. To view the contents of the files, use <code>git cat-file -p</code> command on the sha1 of the files</p><pre><code class=language-bash>$ git cat-file -p 303ff981c488b812b6215f7db7920dedb3b59d9a
+first file
+</code></pre><p>For the second one,</p><pre><code class=language-bash>$ git cat-file -p 1c59427adc4b205a270d8f810310394962e79a8b
+second file
+</code></pre><p>Let us inspect the tree file now. As before, do this:</p><pre><code class=language-bash>    python -c &quot;import zlib; print(zlib.decompress(open('.git/objects/37/7295adbf4e9f01892fd377e467549b38adc16b', 'rb').read()))&quot;
+</code></pre><p>You will see sth like this</p><pre><code class=language-bash>python -c &quot;import zlib; import sys; sys.stdout.buffer.write(zlib.decompress(open(sys.argv[1], 'rb').read()))&quot; .git/objects/37/7295adbf4e9f01892fd377e467549b38adc16b | hexdump -C
+</code></pre><pre><code class=language-bash>00000000  74 72 65 65 20 36 35 00  34 30 30 30 30 20 62 61  |tree 65.40000 ba|
+00000010  72 00 5b 92 79 67 da 78  02 a0 15 47 77 71 74 4c  |r.[.yg.x...GwqtL|
+00000020  25 13 6f f6 df 61 31 30  30 36 34 34 20 66 6f 6f  |%.o..a100644 foo|
+00000030  2e 74 78 74 00 30 3f f9  81 c4 88 b8 12 b6 21 5f  |.txt.0?.......!_|
+00000040  7d b7 92 0d ed b3 b5 9d  9a                       |}........|
+00000049
+</code></pre><p>A tree object is laid out as follows:</p><pre><code class=language-bash>tree&lt;space&gt;&lt;size_after_null_terminator&gt;00
+&lt;mode&gt;&lt;space&gt;&lt;name&gt;00&lt;20_bytes_sha1&gt;
+&lt;mode&gt;&lt;space&gt;&lt;name&gt;00&lt;20_bytes_sha1&gt;
+</code></pre><p>The <code>mode</code> refers to the permissions of the file/directory. Git does not store all of the UNIX permissions. Here are all the modes you will encounter in git.</p><table><thead><tr><th>Mode</th><th>Type</th><th>Description</th></tr></thead><tbody><tr><td><code>100644</code></td><td>blob</td><td>Normal file (non-executable)</td></tr><tr><td><code>100755</code></td><td>blob</td><td>Executable file</td></tr><tr><td><code>120000</code></td><td>blob</td><td>Symbolic link</td></tr><tr><td><code>160000</code></td><td>commit</td><td><strong>Git submodule</strong> (pointer to a commit)</td></tr><tr><td><code>40000</code></td><td>tree</td><td>Directory</td></tr></tbody></table><p>Let us also observe the blob files.</p><pre><code class=language-bash>python -c &quot;import zlib; import sys; sys.stdout.buffer.write(zlib.decompress(open(sys.argv[1], 'rb').read()))&quot; .git/objects/30/3ff981c488b812b6215f7db7920dedb3b59d9a | hexdump -C
+python -c &quot;import zlib; import sys; sys.stdout.buffer.write(zlib.decompress(open(sys.argv[1], 'rb').read()))&quot; .git/objects/1c/59427adc4b205a270d8f810310394962e79a8b | hexdump -C
+</code></pre><p>Here are their outputs</p><p><strong>First File</strong></p><pre><code>00000000  62 6c 6f 62 20 31 31 00  66 69 72 73 74 20 66 69  |blob 11.first fi|
+00000010  6c 65 0a                                          |le.|
+00000013
+</code></pre><p><strong>Second File</strong></p><pre><code>00000000  62 6c 6f 62 20 31 32 00  73 65 63 6f 6e 64 20 66  |blob 12.second f|
+00000010  69 6c 65 0a                                       |ile.|
+00000014
+</code></pre><p>Here, we can conclude that the structure of a blob object is as follows:</p><pre><code>blob&lt;space&gt;&lt;size_after_null_terminator&gt;00&lt;content&gt;
+</code></pre><p>So, in summary, when you commit, a commit object is created which holds the sha1 sum of a tree object. The tree object’s contains the sha1 sum of files and directories present in the root directory of your project. By following these hashes, you will get to the sub-directories and all the files that was present at the time of the commit.</p><p>That is all you need to know about the git’s object based storage model.</p><hr><h2 id=section-2-git-clone>Section 2: Git Clone</h2><p>Git clone is done by making a request from a git client (installed on your system) to a git server (e.g. GitHub, Gitlab, or your own git server). Git uses either SSH or HTTP(S) to communicate with the server. You will find the protocol referred to as <strong>Smart HTTP(s)</strong> because there’s a special syntax to that.</p><p>Git clone takes place in two steps.</p><h3 id=ref-discovery>Ref Discovery</h3><p><img src=/images/articles/git-internals/git-clone-communication.png alt=git-clone-communication.png></p><ol><li>The client asks the server what <strong>refs</strong> are available.</li><li>The server sends a list of refs that are available and a <strong>list of capabilities.</strong></li></ol><p><strong>Refs</strong> are just human-readable pointers to commits. Capabilities are features that the git server supports. For example, <code>side-band</code> means if you make the next request (about which I will talk about soon), the server will also send the progress alongside pack files. There are other features about which you can find more here: <a href=https://git-scm.com/docs/protocol-capabilities>https://git-scm.com/docs/protocol-capabilities</a>.</p><p>I have implemented my own git using <a href=https://app.codecrafters.io/courses/git/overview>Codecrafter&rsquo;s Build Your Own Git</a> challenge, which I will use to show the details the cloning process. You can find the code <a href=https://github.com/UdeshyaDhungana/codecrafters-git-go>here</a>.</p><p>Let us make the <code>ref-discovery</code> request first.</p><pre><code class=language-go>/* ...... code ...... */
+func GetGitUploadPack(repoURL string) (*http.Response, error) {
+    serviceURL := fmt.Sprintf(&quot;%s/info/refs?service=git-upload-pack&quot;, repoURL)
+    return http.Get(serviceURL)
+}
+/* ...... code ...... */
+</code></pre><p>The structure of response is as follows</p><pre><code>001e# service=git-upload-pack
+0000
+015547b37f1a82bfe85f6d8df52b6258b75e4343b7fd HEADmulti_ack thin-pack side-band side-band-64k ofs-delta shallow deepen-since deepen-not deepen-relative no-progress include-tag multi_ack_detailed allow-tip-sha1-in-want allow-reachable-sha1-in-want no-done symref=HEAD:refs/heads/master filter object-format=sha1 agent=git/github-203a3d8c358f
+003f47b37f1a82bfe85f6d8df52b6258b75e4343b7fd refs/heads/master
+0000
+</code></pre><h3 id=git-pkt-line-format>Git PKT Line Format</h3><p>To understand this better, git uses a PKT line encoding. Each line starts with 4 hex digits, which indicates the size of the line, including itself and trailing newline. A special <code>flush</code> line has just <code>0000</code>.</p><p>For example, see the line starting with <code>0155</code>.</p><pre><code class=language-go>015547b37f1a82bfe85f6d8df52b6258b75e4343b7fd HEADmulti_ack thin-pack side-band side-band-64k ofs-delta shallow deepen-since deepen-not deepen-relative no-progress include-tag multi_ack_detailed allow-tip-sha1-in-want allow-reachable-sha1-in-want no-done symref=HEAD:refs/heads/master filter object-format=sha1 agent=git/github-203a3d8c358f
+</code></pre><p>The <code>0155</code> part indicates that the line is 341(0x155) bytes long. You can check for it yourself.</p><p>Lines starting with <code>#</code> are comments and can be ignored. However, git protocol specifies that the server must respond with <code># service=git-upload-pack</code> on the first line.</p><p>For the lines that are not comment or flush, they are structured as follow</p><pre><code>&lt;4 bytes for size&gt;&lt;20 bytes for shasum&gt;&lt;space&gt;&lt;ref_name&gt;\n
+</code></pre><p>Please keep in mind that I haven’t touched upon the lines that contain information on tags.</p><p>Only the first line contains capabilities, and is structured as follows:</p><pre><code>&lt;4 bytes for size&gt;&lt;20 bytes for shasum&gt;&lt;space&gt;&lt;ref_name&gt;00&lt;capabilities separated by space&gt;\n
+</code></pre><p>From here, grab the shasum of the HEAD and proceed to making <code>upload-pack</code> request. You may also include other commits, but let’s see an example with a single one. It will be enough to understand the rest.</p><h3 id=upload-pack-post>Upload Pack POST</h3><pre><code class=language-go>func PostGitUploadPack(repoURL, want string) (*http.Response, error) {
+    var body bytes.Buffer
+
+    body.Write(pktLine(fmt.Sprintf(&quot;want %s\n&quot;, want)))
+    body.Write(flushPkt())
+    body.Write(pktLine(&quot;done\n&quot;))
+
+    req, err := http.NewRequest(&quot;POST&quot;, repoURL+&quot;/git-upload-pack&quot;, &amp;body)
+    if err != nil {
+        return nil, err
+    }
+    req.Header.Set(&quot;Content-Type&quot;, &quot;application/x-git-upload-pack-request&quot;)
+    req.Header.Set(&quot;Accept&quot;, &quot;application/x-git-upload-pack-result&quot;)
+
+    return http.DefaultClient.Do(req)
+}
+</code></pre><p>Here, <code>want</code> is the sha1sum of the HEAD that you grabbed from the previous request. Right now, I am not requesting the server for any capabilities to show you the bare-minimum implementation of <code>git clone</code>.</p><p>The response to this request is a git pack file. Let me show you the structure of a packfile.</p><p><img src=/images/articles/git-internals/packfile-format.png alt=packfile-format.png></p><p>A packfile starts with a <code>pkt-line</code> encoded “NAK” literal. It is followed by a literal “PACK” literal.</p><h3 id=packfile-header>Packfile Header</h3><p>The next 4 bytes after that is designated for the version and the next 4 bytes after that correspond to the number of objects in the body that follows.</p><p>There is an important point to note here. The version and number of objects are stored in big-endian format. If you are familiar with big-endian and little-endian formats, you can skip this part. For the ones who aren’t, please continue reading.</p><p>Let us decode one to understand. Suppose, we encounter <code>00 00 00 02</code> while reading version and <code>00 00 01 4c</code> while reading the number of objects field.</p><p>In big endian format, the most significant byte comes first. So,</p><pre><code>Bytes (hex):      00    00    00    02
+Position:         MSB               LSB
+</code></pre><p>This means that the version is 2.</p><pre><code>Bytes (hex):      00    00    01    4c
+Position:         MSB               LSB
+</code></pre><p>This equates to 332 (0x0000014c) in decimal.</p><p>So, there are 332 unique objects that we will encounter next.</p><h3 id=packfile-body>Packfile Body</h3><p>Now, let us see how the contents of the packfile body is organized.</p><p><img src=/images/articles/git-internals/packfile-body.png alt=packfile-body.png></p><p>The illustration above shows that for each object, there will be a header section, and a zlib-compressed body section that will contain the object’s contents.</p><h3 id=object-header>Object Header</h3><p>The header section specifies two key things: object type, and the size of the object after decompression. The size is indicated so that the git client can allocate the memory for the decompressed object.</p><p>The object type may be any one of the following:</p><ul><li>COMMIT = 1 (001)</li><li>TREE = 2 (010)</li><li>BLOB = 3 (011)</li><li>TAG = 4 (100)</li><li>OFS_DELTA = 6 (110)</li><li>REF_DELTA = 7 (111)</li></ul><p>I will tell you what the numbers mean in a while.</p><p>Now, let us see how the object type and the object size can be extracted from the object header.</p><p>Read the first byte. The first byte’s bit[4-6] (index starts at 0) will tell you the type of the object. If you read the first byte into a variable <code>b</code>, you can find the size by doing following:</p><pre><code class=language-go>/* shift the byte to the right by 4 bits and AND with 0111, which will give you the object type  */
+objTypeCode := (b &gt;&gt; 4) &amp; 0x7
+</code></pre><p>The size is stored in a different way. Here is how you can extract it. From byte you just read (for extracting the type), just extract the 4 least significant bits.</p><pre><code class=language-go>/* extract the least significant 4 bits */
+objectSize := int(b &amp; 0x0F)
+</code></pre><p>Now, Check for MSB of <code>b</code>.</p><ol><li>If it is 0, you are done.</li><li>If not, read the next byte and extract the bits 0-6.</li><li>Now, shift the byte you just read by 4 bits (remember that the byte you read before this has 4 bits), and OR it with <code>objectSize</code> .</li><li>Check for MSB of the byte you just read, if it is 0, you are done.</li><li>If not, read next byte, and again extract the bits 0-6.</li><li>How much will you shift by this time? By 11 (7 + 4). By now, you must know what to do next.</li><li>You only stop if the MSB of the byte you just read is 0. If not, you extract the bits 0-6, shift it to the left by appropriate amount, and OR it with the size variable.</li></ol><pre><code>objectSize = ....... | ....... | ....... | ....
+                             byte3     byte2    byte1   byte0
+</code></pre><p>The first 4 bits come from the first byte’s bits 0-3. The next 7 bits come from <code>byte1 & 0x7F</code>, the next 7 bits from <code>byte2 & 0x7F</code> and so on.</p><p>Now, if the object is of type <code>REFDELTA</code>, additional 20 bytes are reserved for the SHA1 sum of the object it references. I will explain what a REFDELTA is in a while. But for now, you will need to keep in mind that you need to extract the SHA1 sum as well, if the object type is refdelta.</p><blockquote><p><em>I spent a few days trying to figure out why my zlib decompression was not working as I tried to decompress the content that was immediately available after objectSize for all types of objects, including REFDELTA</em></p></blockquote><h3 id=object-body>Object Body</h3><p>The object body is a zlib compressed chunk of data. You will need to decompress using zlib first.</p><p>Now, if you observe the decompressed objects, you will notice that for <code>blob</code>, <code>trees</code> and <code>commit</code>, the content is a bit different from what it appears in the object file inside <code>.git/objects</code> directory. To be exact, the body only contains everything after null termination character if the object were to be stored in a git object file.</p><p>For example, for a blob, the content will not be</p><pre><code>blob&lt;space&gt;&lt;size_after_null_terminator&gt;00&lt;content&gt;
+</code></pre><p>but rather, only</p><pre><code>&lt;content&gt;
+</code></pre><p>The same goes for tree and commit objects.</p><p>Now you can easily parse the contents of the object that appears in the packfile, except for the RefDeltas.</p><h3 id=refdelta>RefDelta</h3><p>If you know a little bit of calculus, you might know that delta means a small change. So, what is a refdelta? Refdelta is an object, which contains a set of instructions to create a new object from an existing one.</p><p><em>But why refdeltas? Why can’t git send me entire objects instead of refdeltas?</em></p><p>Refdeltas offer an efficient way to store objects. It tracks only the changes to be made to an object to create a new one. For example, you have a 1000 line file that you committed. In the next commit, you added 10 new lines. It is not efficient to send you two different blobs. The git server will send you the first object and a refdelta that tracks only that change made to that object. In this case, the additional 10 lines.</p><p>Remember the 20 bytes SHA1 in the header section that I told you to keep track of while parsing the object header? Yes, that is the sha1 hash of the object it references.</p><p>How do I create a new object from RefDelta? That, I will tell you shortly. First, let us understand how a RefDelta object is structured.</p><p><strong>How to extract the contents of RefDelta?</strong></p><p><img src=/images/articles/git-internals/refdelta.png alt=refdelta.png></p><p>The Refdelta contains source object size, followed by the target object size. The source object size is the size of the object it references. The target size is the final size of the object that will be created after the ref-delta has been applied to the object it references. The target size is followed by a series of COPY and/or ADD instructions. I will explain this shortly. Let us first understand how the size encoding is done in refdelta.</p><p><strong>How is source object size encoded?</strong></p><p>The same way object size is encoded in packfile header. The only difference is that you start by extracting the LSB 0-6 of the first byte instead of LSB 0-3, and shift the next byte by 7 instead of 4 in the first iteration. Everything is exactly the same. You stop when the MSB of the byte you just read is 0. This is called LEB128 encoding.</p><p>For example let’s say you read these bytes (in hex):</p><pre><code>0xE5 0x8E 0x26
+</code></pre><p>Binary:</p><pre><code>0xE5 = 11100101 → continuation bit set (more to read), value bits: 1100101 = 0x65
+0x8E = 10001110 → continuation bit set, value bits: 0001110 = 0x0E
+0x26 = 00100110 → last byte, value bits: 0100110 = 0x26
+</code></pre><p>Decoding:</p><pre><code>result = 0
+result |= 0x65 &lt;&lt; 0
+result |= 0x0E &lt;&lt; 7
+result |= 0x26 &lt;&lt; 14
+
+Total =  100197
+</code></pre><p><strong>How is target object size encoded?</strong></p><p>The same way as the source size is.</p><p><strong>How are Instructions encoded?</strong></p><p>A refdelta object will have two type of instructions: <strong>COPY</strong> and <strong>ADD</strong>.</p><ol><li><strong>COPY:</strong> Copy data of size <code>n</code> from offset <code>offset</code> from the referenced file.</li><li><strong>ADD:</strong> Insert these literal data to object.</li></ol><p>After you’re done reading target object size, read next byte. If the MSB is 1, you are reading a COPY instruction. If it is 0, the instruction is ADD.</p><p><strong>ADD</strong></p><p>This one is very easy. Extract bits 0-6 from the byte you just read. It specifies the size of literal data in bytes. The literal data follows after this byte. You may have noticed that the maximum amount of data an ADD instruction can contain is 127 bytes (0x7F maximum). What if it git needs more than that? Git will simply insert a next ADD instruction after the first one if the size of literal data is greater than 127 bytes.</p><p><strong>COPY</strong></p><p>How do you extract data size (<code>n</code>) and the offset?</p><p>From the byte you just read,</p><ul><li><strong>Bits 6-4:</strong> Contains information on data size <code>n</code>.</li><li><strong>Bits 3-0:</strong> Contains information on offset.</li></ul><p>You must extract offset first, and then the size. Let me explain this using an example.</p><p>Let’s say the control byte <code>b</code> is:</p><pre><code>b = 11101101
+
+Let's break this down
+
+bit 0 = 1 → read next byte (for offset) → used as bits 0–7 of offset
+bit 1 = 0 → skip                        → if this was read, it would have been bits 8-15 of offset
+bit 2 = 1 → read next byte (for offset) → used as bits 16–23 of offset
+bit 3 = 1 → read next byte (for offset) → used as bits 24–31 of offset
+
+bit 4 = 0 → skip
+bit 5 = 1 → read next byte (for size) → used as bits 8–15 of size
+bit 6 = 1 → read next byte (for size) → used as bits 16–23 of size
+</code></pre><p>First you extract offset by iterating over each bit in the LSB.</p><p>If the bit is 1, read next byte and left shift it by <code>8 * i</code> , where <code>i</code> is the position of current bit from the right, and OR it with offset. If it is 0, continue the loop.</p><p>Then you extract size by iterating over bits 4-6 of the control byte.</p><p>If it is 1, read next byte and left shift it by <code>(i - 4) * 8</code> , where <code>i</code> is the position of the current bit from the right, and OR it with size. If it is 0, continue the loop.</p><p>Now, you should be able to parse the contents of RefDelta object.</p><hr><h3 id=applying-refdelta>Applying RefDelta</h3><p>Even if you computed <code>sha1</code> of all of the object you decompressed, none of the refdeltas’ referenced SHA will match any of them.</p><p>After extracting the non-delta objects, you should prepend their content with an appropriate header. For example, if you extracted a blob object, prepend it with</p><pre><code>blob &lt;size&gt;00&lt;content
+</code></pre><p>Just like it would appear in a git object file, and then only compute its SHA1. Now, you might notice that at least one object’s SHA1 should match the refdelta’s referenced SHA.</p><p>Let’s see how a refdelta object is applied to an existing one to create a new one.</p><p>Let’s say we have a <strong>base file</strong> (original Git object):</p><pre><code>Base file:
+&quot;Hello, my name is Alice.\n&quot;
+</code></pre><p>Given a refdelta object like this (The content on the right side of the arrow is the evaluation of that instruction)</p><pre><code>COPY offset=0, size=18 → &quot;Hello, my name is A&quot;
+
+ADD 3 bytes: &quot;Bob&quot; → replace &quot;Alice&quot; with &quot;Bob&quot;
+
+COPY offset=23, size=1 → copy the &quot;\n&quot;
+
+ADD 21 bytes: &quot;Nice to meet you!\n&quot;
+</code></pre><p>After applying this to the base file, the new file will be</p><pre><code>&quot;Hello, my name is ABob\nNice to meet you!\n&quot;
+</code></pre><p><strong>How to apply all deltas?</strong></p><p>Store the delta objects in a queue. Keep dequeueing the queue until it is empty. On each dequeue, apply the refdelta to its referenced object. Generate a new object, and put it in your objects list.</p><p>After all deltas has been applied, initialize the <code>.git</code> directory, and save all the objects in <code>.git/objects</code> directory.</p><p><strong>Populating the cloned directory</strong></p><p>Keep track of the SHA1 of the HEAD. From there, find the sha1 of the head and it’s tree. Once you find the root tree, create every file and directory that appears in the tree object file, recursively. I am leaving this up to you. But this is how git does it.</p></main><footer><link rel=stylesheet href=//cdn.jsdelivr.net/npm/katex/dist/katex.min.css><script src=//cdn.jsdelivr.net/combine/npm/katex/dist/katex.min.js,npm/katex/dist/contrib/auto-render.min.js,npm/@xiee/utils/js/render-katex.js defer></script><script src=//cdn.jsdelivr.net/npm/@xiee/utils/js/center-img.min.js defer></script><hr>© Udeshya Dhungana 2020 - Today | <a href=https://github.com/udeshyadhungana>Github</a> | <a href=https://x.com/udeshyadhungana>Twitter</a></footer></body></html>
