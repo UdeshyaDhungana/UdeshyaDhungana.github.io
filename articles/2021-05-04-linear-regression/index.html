@@ -1,5 +1,4 @@
-<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linear Regression | Curious...</title>
-<link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/articles/>Articles</a></li><li><a href=/index.xml>RSS</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>Linear Regression</span></h1><h2 class=date>2021/05/04</h2></div><main><p>Hello. Today I want to write about Linear Regression. It is basically
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Linear Regression | Curious...</title><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/articles/>Articles</a></li><li><a href=/index.xml>RSS</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>Linear Regression</span></h1><h2 class=date>2021/05/04</h2></div><main><p>Hello. Today I want to write about Linear Regression. It is basically
 the &ldquo;Hello, World&rdquo; program of Machine Learning. It is used to model
 the relationship between one or more inputs and a single output. Its application
 ranges from engineering to business. It is a process of learning from data.
@@ -79,7 +78,7 @@ As above, our dataset consists of \(X\), the matrix of independent variables and
 \(Y\), the matrix of outputs. We have to find the \(\theta\)&rsquo;s for which following equation
 satisfies:</p>$$
 \begin{bmatrix}1 & (x^{(0)})^{T}\\1 & (x^{(1)})^{T}\\\vdots\\1 & (x^{(n-1)})^{T}\\\end{bmatrix}
-  \begin{bmatrix}\theta_0\\\theta_1\\\vdots\\\theta_d\end{bmatrix} =
+\begin{bmatrix}\theta_0\\\theta_1\\\vdots\\\theta_d\end{bmatrix} =
 \begin{bmatrix}y^{(0)}\\y^{(1)}\\\vdots\\y^{(n-1)}\end{bmatrix}
 $$<p></p>$$ A \quad \quad \quad \quad \quad \theta\quad =\quad Y $$<p>The matrix \(A\) is a matrix formed by augmenting a column with all
 elements 1 in front of matrix X. Alas! This system of equation will
@@ -138,7 +137,7 @@ $$$$
 \begin{bmatrix}
 a_{11} & a_{12} & \dots \\
 \vdots & \ddots & \\
-a_{m1} &        & a_{mn}
+a_{m1} & & a_{mn}
 \end{bmatrix}
 \begin{bmatrix}x_1\\x_2\\\vdots\\x_n\end{bmatrix} =
 \begin{bmatrix}b_1\\b_2\\\vdots\\b_n\end{bmatrix}

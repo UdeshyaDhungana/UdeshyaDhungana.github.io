@@ -1,0 +1,218 @@
++++
+date = "2025-10-25"
+title = "Rome wasn't built in a day, but Grep was"
++++
+
+This text assumes that you have a general idea about the following:
+
+- Regular Expression
+- Finite State Machine
+
+
+Ken Thompson wrote one of the most important programs we use in a single night. Here we deal with how do do the same. Well, not exactly the same, but we'll deal with how you can make your own Grep using Finite State Machine [(FSM)](https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton). I'll not be showing the entire [source code]() here. I'll be referring to snippets of the original source code to show how it makes use of FSM. This text is **not** a tutorial, is supposed to give you a general idea of building a simple version of Grep using the concept of FSMs.
+
+## Starting Easy
+
+Let's say you're trying to search for a literal string `lucky` in a large text file. It's pretty easy. You'll do the following (or atleast something similar to this):
+
+1. Start scanning the text file
+2. If the current character is `l`:
+    - Start another scan of 4 subsequent characters starting at the current character
+    - Check that the next 4 characters are `u`, `c`, `k`, `y`, in that order.
+    - If yes, jackpot!
+    - If no, halt this scan and return to the outer scan.
+3. If the current character is not `l`, move to the next character.
+
+Although this can be wildly optimized, this logic breaks down if we're dealing with regular expressions. A simple expression like `hel+o` will be very difficult to deal with. Furthermore, the logic will be wrapped like sphagetti if we wish to deal with something complex like `^I see \d+ (cat|dog)s?$`.
+
+## Nondeterministic Finite State Automation
+
+If you've taken an undergraduate course on Computational Theory or Discrete Maths, you must be familiar with these things. They facilitate searching for a text using regular expression (just like what grep does). Let's recap the topic.
+
+A regular expression is [equivalent](https://courses.grainger.illinois.edu/cs373/sp2013/Lectures/lec07.pdf) to a NFA. It means, every regular expression has a equivalent NFA that will approve of the string if that string is also matched by the regular expression.
+
+A NFA has the following:
+
+- A set of states
+- A finite set of input symbols (which will be ascii text in case of our version of grep)
+- A transition function that defines what the next state should be if a certain input is encountered
+- An initial state
+- A set of final states
+    - **If we land on any of the final states after we've read all the input, the machine is said to have approved the input text**.
+    - If we land on any of the final state before the all of the input text has been processed and there are no transitions from the final state, the input text won't be approved.
+    - If we don't land on any of the final states after all of the input text has been processed, the input text won't be approved.
+
+For example, consider the following NFA:
+
+![NFA for (0|1)*1](/static/images/articles/grep/nfa_wikipedia.png)
+
+This NFA approves of the string that ends in `1`. In other words, it is equivalent to the regular expression `(0|1)*1`.
+
+This NFA has:
+
+- A set of states: `p` and `q`.
+- A finite set of input symbols: `0` and `1`
+    - This means our input text will consist only of `0`s and `1`s 
+- A transition function
+    - Shown by the diagram
+    - If we're on state `p`:
+        - If we encounter a `0`, we stay at `p`
+        - If we encounter a `1`, we can either stay at `p`, or transition to `q`. This is non-deterministic. More on this below.
+- An initial state: `p`
+    - Shown by the arrow on `p`.
+- A set of final states
+    - State `q` is the final state.
+
+
+
+Now, let's unpack that non-deterministic part. If we're on state `p` and encounter a `1`, we're 'free' to stay at `p` or transition to `q`, i.e. instead of a single current state, we have multiple. We may start out on a single initial state. But, if we encounter any non-deterministic transition along the way, we'll be at two different states simultaneously. From there onwards, we calculate what the next state will be for all the current states we are in using the transition function.
+
+In other words, you can imagine the universe splitting into two (or more) versions of itself once we encounter a non-deterministic transition. Each splitted version may re-split if it encounters another non-deterministic transition.
+
+If the input string ends in `1`, for eg `010100111`, we know that for at least one 'universe', the state will remain at `p` before we encounter the last `1` in the input string. This is because this universe was the universe that chose to stay at `p` everytime a `1` was encountered before. And at the very last transtition, this universe can choose to transition to `q` and hence landing on the final state after all of the input have been processed.
+
+On the other hand, if the string is `010`.
+
+- After the first transition, we'll still have one universe, which will be at `p`, because there's no non-deterministic transition for `0`.
+
+- After the second transition, we'll have two universes, one at `p` and one at `q`.
+
+- After the third transition:
+    - The universe that chose to stay at `p` will stay at `p`.
+    - The universe that chose to move to `q` will be rejected because there are no any transition function for `0` at the state `q`.
+
+
+## Extracting expressions
+
+The program we're trying to build should extract individual expressions from the regex string. For example, the regex `^I see \d+ (cat|dog)s?$` consists of the sequence the following expressions:
+
+- Literal expression `I`
+- Literal expression ` ` (space)
+- Literal expression `s`
+- Literal expression `e`
+- Literal expression `e`
+- Literal expression ` ` (space)
+- One or more quantifier of the expression:
+    - Digit expression
+- Literal expression ` ` (space)
+- Alternation of the expressions:
+    - Sequence of literal expressions:
+        - `c`
+        - `a`
+        - `t`
+    - Sequence of literal expressions:
+        - `d`
+        - `o`
+        - `g`
+- Quantifier (min = 0, max = 1) of the expression:
+    - Literal `s`
+
+
+A regular expression, thus, is always a sequence of individual expressions, which themselves may be nested. This text will not cover parsing either. You can use [Pratt Parser](https://en.wikipedia.org/wiki/Operator-precedence_parser), [Recursive Descent Parser](https://en.wikipedia.org/wiki/Recursive_descent_parser), or any other parsers for that matter.
+
+Now, assuming that the regular expression has been parsed into a sequence of individual expressions, we move on to the main part of constructing the NFA for the regex. We do this piece by piece, starting from the easier ones.
+
+
+## NFA for a single character expression
+
+Let's deal with the very simple case first, where the regular expression consists only of a single character. For eg, searching for `z` or `l` in a text.
+
+This is very easy. We construct the following NFA:
+
+![NFA for a single character](/static/images/articles/grep/single_character.png)
+
+This NFA will allow us to transition from the initial state `I` to the final state `F` if our desired character, let's say, `c`, is encountered. Pretty straight forward!
+
+## NFA for a digit expression (`\d`)
+
+Constructing an NFA for a digit character (`\d`) is similar to constructing one for a single character expression.
+
+![NFA for digit expression](/static/images/articles/grep/digit.png)
+
+The NFA will make a transition to the final state if any character whose ASCII value is greater than `'0' (0x30)` and smaller than `'9' (0x39)` is encountered.
+
+## NFA for an alphanumeric expression (`\w`)
+
+The NFA for an alphanumeric character (`\w`) is also a piece of cake.
+
+![NFA for alphanumeric expression](/static/images/articles/grep/alphanumeric.png)
+
+The NFA will make a transition to the final state if the character encountered satisfies any one of the following constraints:
+
+- `(c < 'a' && c < 'z') || (c < 'A' && c < 'Z')`
+- `(c > '0' && c < '9')`
+- `c == '_'`
+
+## NFA for a wildcard expression (`.`)
+
+I'm not even going to show you the NFA here. You can figure it out, honestly!
+
+## Combining the logic for single character expressions
+
+```go
+// getSymbolCompliantFunction will return a function that will return a bool.
+// It returns a function that returns true if the character supplied to that function is the desired token.
+func getSymbolCompliantFunction(token tokenizer.Token) func(symbol byte) bool {
+	return func(symbol byte) bool {
+		switch token.Type {
+		case tokenizer.Digit:
+			return symbol >= '0' && symbol <= '9'
+		case tokenizer.AlphaNumeric:
+			return (symbol >= 'a' && symbol <= 'z') || (symbol >= 'A' && symbol <= 'Z') || (symbol > '0' && symbol <= '9') || (symbol == '_')
+		case tokenizer.Literal:
+			return symbol == token.Character
+		case tokenizer.WildCardDot:
+			return true
+		default:
+			panic(fmt.Sprintf("Cannot return symbol compliant function. Character: (%s)", token.Character))
+		}
+	}
+}
+
+// NFA yields a desired NFA for the single chracter expression (digit/alphanumeric/literal/wildcard)
+func (a *SingleCharacter) NFA() *nfa.NFA {
+	nfa := nfa.New()
+
+    // Add two states
+    // Mark the latter one as the final state
+	startState := nfa.AddState(false)
+	endState := nfa.AddState(true)
+
+    // Mark the former one as the initial state
+	nfa.Start = startState
+
+    // Add a transition function such that the transition occurs only if the desired character is encountered
+	nfa.AddTransition(startState, endState, getSymbolCompliantFunction(a.Token))
+
+	return nfa
+}
+```
+
+## NFA for Positive Character Group
+
+A positive character group matches a character if the character encountered is among any of the characters inside the group. For eg, for the group `[abc]`, the regular expression satisfies either `a`, or `b`, or `c`. Easy as a breeze!
+
+![NFA for positive character group](/static/images/articles/grep/positive_group.png)
+
+The NFA will make a transition to the final states if any character inside the character group is encountered.
+
+Alternatively, we also could've done this using a single transition that returns true if the encountered character is present in the character group.
+
+## NFA for Negative Character Group
+
+
+## NFA for a sequence of expressions
+
+A regular expression unfortunately doesn't have a single expression. For example, if we wish to search for the regex `cat`, we should concatenate (no pun intended) three single character expressions. So, how do we construct a NFA that represents the concatenation of two expressions?
+
+- Mark the final states of the first NFA as 'non-final`. Because the NFA should satisfy the string which complies with the former followed by the latter.
+
+- Add an empty transition from all the final states of first NFA to the initial state of the second NFA. As simple as that!
+
+![NFA for concatenation](/static/images/articles/grep/concat.png)
+
+### But what's an empty transition?
+
+An empty transition is such a transition function that allows you to 'split the universe' into two where one universe stays at the current state and the other one transitions to the next state of the empty transition. It is marked by the `ε` (epsilon) character in the transition arrow.
+
+## NFA for 
