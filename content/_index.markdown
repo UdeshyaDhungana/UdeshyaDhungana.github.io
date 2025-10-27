@@ -4,7 +4,7 @@ title: Home
 
 # Udeshya
 
-Solutions Engineer at [Logpoint](https://www.logpoint.com/en/). Into programming and automation.
+I'm still learning...
 
 You can contact me via:
 - udeshyadhungana1 [at] gmail.com
