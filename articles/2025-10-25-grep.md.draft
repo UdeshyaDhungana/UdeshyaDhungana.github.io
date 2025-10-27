@@ -198,8 +198,19 @@ The NFA will make a transition to the final states if any character inside the c
 
 Alternatively, we also could've done this using a single transition that returns true if the encountered character is present in the character group.
 
+```go
+```
+
 ## NFA for Negative Character Group
 
+A negative character group matches a character if the character encountered is not among any of the characters inside the group. For eg, for the group `[^abc]`, the regular expression satisfies any character except `a`, `b`, and `c`.
+
+![NFA for negative character group](/static/images/articles/grep/negative-character-group.png)
+
+The NFA will make a transition to the final state if the character encountered is not among any characters inside the group.
+
+```go
+```
 
 ## NFA for a sequence of expressions
 
@@ -211,8 +222,57 @@ A regular expression unfortunately doesn't have a single expression. For example
 
 ![NFA for concatenation](/static/images/articles/grep/concat.png)
 
+```go
+```
+
 ### But what's an empty transition?
 
 An empty transition is such a transition function that allows you to 'split the universe' into two where one universe stays at the current state and the other one transitions to the next state of the empty transition. It is marked by the `ε` (epsilon) character in the transition arrow.
 
-## NFA for 
+## NFA for `+` quantifier
+
+A 'one or more' quantifier, symbolized as the `+` quantifier approves one or more occurence of the previous expression. For example, `ca+ts` matches any string which contains `c`, followed by one or more `a`, followed by a `t`, followed by a `s`.
+
+So, how do we construct an NFA for the `+` quantifier? We do the following:
+
+- Construct the NFA for the expression in which the quantifier is being applied
+- Add an empty transition from all the final states of the NFA to its initial state
+
+But why? 
+
+We want to approve any string which satisfies the NFA once or more times. So, by adding an empty transition from all the final states to the initial state, we allow the NFA to approve at least one, or more occurences of that string. After first occurence of the expression, the NFA will have ended up in at least one of the final states. If there are more occurences of that expression, the empty transition will split the universe into different versions, where at least one of those will end up at the initial state. After that, for the subsequent occurences of that expression, the NFA will again end up in one of the final states. Take a moment to absorb that. I cannot phrase that better :(
+
+![NFA for + quantifier](/static/images/articles/grep/at-least-once.png)
+
+## NFA for the `?` quantifier
+
+A `zero or one` quantifier, symbolized as the `?` quantifier approves zero or one occurence of the previous expression. For example, `ca?ts` matches `cts` or `cats`.
+
+So, how does the NFA for the `?` quantifier look like
+
+- Just add an empty transition from the initial state to all the final states.
+
+This allows the evaluation to 'skip' the NFA (complying with the zero occurence).
+
+![NFA for ? quantifier](/static/images/articles/grep/zero-or-one.png)
+
+## NFA for `*` quantifier
+
+## NFA for {n} quantifier
+
+## NFA for {n,} quantifier
+
+## NFA for {n,m} quantifier
+
+## NFA for alternation
+
+The alternation expression matches a string if either of the expressions in alternation options satisfy the string. For example `c(aa|bb|xx)ts` satisfies `caats`, `cbbts`, or `cxxts`.
+
+So, how do we construct the NFA for the alternation expression?
+
+- Construct the NFA for each expression in the alternation option
+- Create a new NFA with an initial state and a final state
+- Add an empty transition from the initial state of the new NFA to the initial states of all choices NFA
+- Add an empty transition from all the final states of all the choices NFA to the final state of the new NFA
+
+This allows the evaluation loop to take any one of these NFA's evaluation path due to non-determinancy. In other words, universe splits in to `n` versions (`n` is the number of options inside the alternation expression), where each evaluates whether the string matches one of these option.
