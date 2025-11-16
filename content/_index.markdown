@@ -4,7 +4,7 @@ title: Home
 
 # Udeshya
 
-I'm still learning...
+I strive to make computers work for the people, not the other way around.
 
 You can contact me via:
 - udeshyadhungana1 [at] gmail.com
