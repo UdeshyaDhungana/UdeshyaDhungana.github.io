@@ -1,0 +1,291 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>How does Grep work? Learn by rebuilding it | Curious...</title><link rel=stylesheet href=/css/style.css><link rel=stylesheet href=/css/fonts.css></head><body><nav><ul class=menu><li><a href=/>Home</a></li><li><a href=/articles/>Articles</a></li><li><a href=/index.xml>RSS</a></li></ul><hr></nav><div class=article-meta><h1><span class=title>How does Grep work? Learn by rebuilding it</span></h1><h2 class=date>2025/10/25</h2></div><main><p>This text assumes that you have a general idea about the following:</p><ul><li>Regular Expression</li><li>Finite State Machine</li></ul><p>Ken Thompson wrote Grep in a single night. Here, you&rsquo;ll understand how to build a mini grep in a single night, assuming that you can finish this text and implement it in a single night. You&rsquo;ll learn how with how to do so using Finite State Machines <a href=https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton>(FSMs)</a>. I&rsquo;ll not be showing the entire <a href=https://github.com/UdeshyaDhungana/grep>source code</a> here. I&rsquo;ll be referring to snippets of the original source code to show how it makes use of FSM. This text is <strong>not</strong> a step-by-step tutorial, but is supposed to give you a general idea of building a simple version of Grep using the concept of FSMs.</p><h2 id=starting-easy>Starting Easy</h2><p>Let&rsquo;s say you&rsquo;re trying to search for a literal string <code>lucky</code> in a large text file. It&rsquo;s pretty easy. You&rsquo;ll do the following (or atleast something similar to this):</p><ol><li>Start scanning the text file</li><li>If the current character is <code>l</code>:<ul><li>Start another scan of 4 subsequent characters starting at the current character</li><li>Check that the next 4 characters are <code>u</code>, <code>c</code>, <code>k</code>, <code>y</code>, in that order.</li><li>If yes, jackpot!</li><li>If no, halt the inner scan and return to the outer scan.</li></ul></li><li>If the current character is not <code>l</code>, move to the next character.</li></ol><p>Although this can be wildly optimized, this logic breaks down if we&rsquo;re dealing with regular expressions. A simple expression like <code>hel+o</code> will be very difficult to deal with. Furthermore, it&rsquo;s likely to get complicated real quick if we want the tool to deal with a complex pattern like <code>^I see \d+ (cat|dog)s?$</code>.</p><h2 id=nondeterministic-finite-state-automation>Nondeterministic Finite State Automation</h2><p>If you&rsquo;ve taken an undergraduate course on Computational Theory or Discrete Maths, you must be familiar with this topic. They facilitate searching for a text using regular expression (just like what grep does). Let&rsquo;s recap the topic.</p><p>A regular expression is <a href=https://courses.grainger.illinois.edu/cs373/sp2013/Lectures/lec07.pdf>equivalent</a> to a NFA. It means, every regular expression has a equivalent NFA that will approve of the string if that string is also matched by the regular expression.</p><p>A NFA has the following:</p><ul><li>A set of states</li><li>A finite set of input symbols (which will be ascii text in case of our version of grep)</li><li>A transition function that defines what the next state should be if a certain input is encountered</li><li>An initial state</li><li>A set of final states<ul><li><strong>If we land on any of the final states after we&rsquo;ve read all the input, the machine is said to have approved the input text</strong>.</li><li>If we land on any of the final state before the all of the input text has been processed and there are no transitions from the final state, the input text won&rsquo;t be approved.</li><li>If we don&rsquo;t land on any of the final states after all of the input text has been processed, the input text won&rsquo;t be approved.</li></ul></li></ul><p>For example, consider the following NFA:</p><p><img src=/static/images/articles/grep/nfa_wikipedia.png alt="NFA for (0|1)*1"></p><p>This NFA approves of the string that ends in <code>1</code>. In other words, it is equivalent to the regular expression <code>(0|1)*1</code>.</p><p>This NFA has:</p><ul><li>A set of states: <code>p</code> and <code>q</code>.</li><li>A finite set of input symbols: <code>0</code> and <code>1</code><ul><li>This means our input text will consist only of <code>0</code>s and <code>1</code>s</li></ul></li><li>A transition function<ul><li>Shown by the diagram</li><li>If we&rsquo;re on state <code>p</code>:<ul><li>If we encounter a <code>0</code>, we stay at <code>p</code></li><li>If we encounter a <code>1</code>, we can either stay at <code>p</code>, or transition to <code>q</code>. This is non-deterministic. More on this below.</li></ul></li></ul></li><li>An initial state: <code>p</code><ul><li>Shown by the arrow on <code>p</code>.</li></ul></li><li>A set of final states<ul><li>State <code>q</code> is the final state.</li></ul></li></ul><p>Now, let&rsquo;s unpack that non-deterministic part. If we&rsquo;re on state <code>p</code> and encounter a <code>1</code>, we&rsquo;re &lsquo;free&rsquo; to stay at <code>p</code> or transition to <code>q</code>, i.e. instead of a single current state, we have multiple. We may start out on a single initial state. But, if we encounter any non-deterministic transition along the way, we&rsquo;ll be at two different states simultaneously. From there onwards, we calculate what the next state will be for all the current states we are in using the transition function.</p><p>In other words, you can imagine the universe splitting into two (or more) versions of itself once we encounter a non-deterministic transition. Each splitted version may re-split if it encounters another non-deterministic transition.</p><p>If the input string ends in <code>1</code>, for eg <code>010100111</code>, at least one current state will have remained at <code>p</code> before encountering the last <code>1</code> in the input string. This is because every time the non-deterministic transition was encountered in the above figure, one transition always chose to remain at <code>p</code>, making one of the current states <code>p</code>. And at the very last transtition, this current state can choose to make a transition to <code>q</code> and hence land on the final state after all of the input have been processed.</p><p>On the other hand, if the string is <code>010</code>.</p><ul><li><p>After the first transition, the current state will be <code>p</code>, because there&rsquo;s no non-deterministic transition for <code>0</code>.</p></li><li><p>After the second transition, we&rsquo;ll have two current states, one at <code>p</code> and one at <code>q</code>.</p></li><li><p>After the third transition:</p><ul><li>The current state at <code>p</code> will stay at <code>p</code>.</li><li>The current state at <code>q</code> will be rejected because there are no any transition function for <code>0</code> at the state <code>q</code>.</li></ul></li></ul><h2 id=extracting-expressions>Extracting expressions</h2><p>The program we&rsquo;re trying to build should extract individual expressions from the regex string. For example, the regex <code>^I see \d+ (cat|dog)s?$</code> consists of the sequence the following expressions:</p><ul><li>Literal expression <code>I</code></li><li>Literal expression <code></code>(space)</li><li>Literal expression <code>s</code></li><li>Literal expression <code>e</code></li><li>Literal expression <code>e</code></li><li>Literal expression <code></code>(space)</li><li>One or more quantifier of the expression:<ul><li>Digit expression</li></ul></li><li>Literal expression <code></code>(space)</li><li>Alternation of the expressions:<ul><li>Sequence of literal expressions:<ul><li><code>c</code></li><li><code>a</code></li><li><code>t</code></li></ul></li><li>Sequence of literal expressions:<ul><li><code>d</code></li><li><code>o</code></li><li><code>g</code></li></ul></li></ul></li><li>Quantifier (min = 0, max = 1) of the expression:<ul><li>Literal <code>s</code></li></ul></li></ul><p>A regular expression, thus, is always a sequence of individual expressions, which themselves may be nested. This text will not cover parsing either. You can use <a href=https://en.wikipedia.org/wiki/Operator-precedence_parser>Pratt Parser</a>, <a href=https://en.wikipedia.org/wiki/Recursive_descent_parser>Recursive Descent Parser</a>, or any other parsers for that matter.</p><p>Now, assuming that the regular expression has been parsed into a sequence of individual expressions, we move on to the main part of constructing the NFA for the regular expression. We do this piece by piece, starting from the easier ones.</p><h2 id=nfa-for-a-single-character-expression>NFA for a single character expression</h2><p>Let&rsquo;s deal with the very simple case first, where the regular expression consists only of a single character. For eg, searching for <code>z</code> or <code>l</code> in a text.</p><p>This is very easy. We construct the following NFA:</p><p><img src=/static/images/articles/grep/single_character.png alt="NFA for a single character"></p><p>This NFA will allow us to make a transition from the initial state <code>I</code> to the final state <code>F</code> if our desired character, let&rsquo;s say, <code>c</code>, is encountered. Pretty straight forward!</p><h2 id=nfa-for-a-digit-expression-d>NFA for a digit expression (<code>\d</code>)</h2><p>Constructing an NFA for a digit character (<code>\d</code>) is similar to constructing one for a single character expression.</p><p><img src=/static/images/articles/grep/digit.png alt="NFA for digit expression"></p><p>The NFA will make a transition to the final state if any character whose ASCII value is greater than <code>'0' (0x30)</code> and smaller than <code>'9' (0x39)</code> is encountered.</p><h2 id=nfa-for-an-alphanumeric-expression-w>NFA for an alphanumeric expression (<code>\w</code>)</h2><p>The NFA for an alphanumeric character (<code>\w</code>) is also a piece of cake.</p><p><img src=/static/images/articles/grep/alphanumeric.png alt="NFA for alphanumeric expression"></p><p>The NFA will make a transition to the final state if the character encountered satisfies any one of the following constraints:</p><ul><li><code>(c &lt; 'a' && c &lt; 'z') || (c &lt; 'A' && c &lt; 'Z')</code></li><li><code>(c > '0' && c &lt; '9')</code></li><li><code>c == '_'</code></li></ul><h2 id=nfa-for-a-wildcard-expression->NFA for a wildcard expression (<code>.</code>)</h2><p>I&rsquo;m not even going to show you the NFA here. You can figure it out, honestly!</p><h2 id=combining-the-logic-for-single-character-expressions>Combining the logic for single character expressions</h2><pre><code class=language-go>// getSymbolCompliantFunction will return a function that will return a bool.
+// It returns a function that returns true if the character supplied to that function is the desired token.
+func getSymbolCompliantFunction(token tokenizer.Token) func(symbol byte) bool {
+	return func(symbol byte) bool {
+		switch token.Type {
+		case tokenizer.Digit:
+			return symbol &gt;= '0' &amp;&amp; symbol &lt;= '9'
+		case tokenizer.AlphaNumeric:
+			return (symbol &gt;= 'a' &amp;&amp; symbol &lt;= 'z') || (symbol &gt;= 'A' &amp;&amp; symbol &lt;= 'Z') || (symbol &gt; '0' &amp;&amp; symbol &lt;= '9') || (symbol == '_')
+		case tokenizer.Literal:
+			return symbol == token.Character
+		case tokenizer.WildCardDot:
+			return true
+		default:
+			panic(fmt.Sprintf(&quot;Cannot return symbol compliant function. Character: (%s)&quot;, token.Character))
+		}
+	}
+}
+
+// NFA yields a desired NFA for the single chracter expression (digit/alphanumeric/literal/wildcard)
+func (a *SingleCharacter) NFA() *nfa.NFA {
+	nfa := nfa.New()
+
+    // Add two states
+    // Mark the latter one as the final state
+	startState := nfa.AddState(false)
+	endState := nfa.AddState(true)
+
+    // Mark the former one as the initial state
+	nfa.Start = startState
+
+    // Add a transition function such that the transition occurs only if the desired character is encountered
+	nfa.AddTransition(startState, endState, getSymbolCompliantFunction(a.Token))
+
+	return nfa
+}
+</code></pre><h2 id=nfa-for-positive-character-group>NFA for Positive Character Group</h2><p>A positive character group matches a character if the character encountered is among any of the characters inside the group. For eg, for the group <code>[abc]</code>, the regular expression satisfies either <code>a</code>, or <code>b</code>, or <code>c</code>. Easy as a breeze!</p><p><img src=/static/images/articles/grep/positive_group.png alt="NFA for positive character group"></p><p>The NFA will make a transition to the final states if any character inside the character group is encountered.</p><p>Alternatively, we also could&rsquo;ve done this using a single transition that returns true if the encountered character is present in the character group.</p><pre><code class=language-go>func (a *PositiveGroup) NFA() *nfa.NFA {
+	nfa := nfa.New()
+
+	startState := nfa.AddState(false)
+	endState := nfa.AddState(true)
+	nfa.Start = startState
+
+	for _, match := range a.ListOfMatches {
+		nfa.AddTransition(startState, endState, getSymbolCompliantFunction(match.Token))
+	}
+
+	return nfa
+}
+</code></pre><h2 id=nfa-for-negative-character-group>NFA for Negative Character Group</h2><p>A negative character group matches a character if the character encountered is not among any of the characters inside the group. For eg, for the group <code>[^abc]</code>, the regular expression satisfies any character except <code>a</code>, <code>b</code>, and <code>c</code>.</p><p><img src=/static/images/articles/grep/negative-character-group.png alt="NFA for negative character group"></p><p>The NFA will make a transition to the final state if the character encountered is not among any characters inside the group.</p><pre><code class=language-go>func (a *NegativeGroup) NFA() *nfa.NFA {
+	nfa := nfa.New()
+
+	startState := nfa.AddState(false)
+	endState := nfa.AddState(true)
+	nfa.Start = startState
+
+	nfa.AddTransition(startState, endState, func(symbol byte) bool {
+		avoidList := []byte{}
+
+		for _, avoid := range a.ListOfAvoids {
+			if avoid.Token.Type != tokenizer.Literal {
+				panic(fmt.Sprintf(&quot;NegativeGroup has non-literal token type: %d&quot;, avoid.Token.Type))
+			}
+
+			avoidList = append(avoidList, avoid.Token.Character[0])
+		}
+
+		// Transition is valid if the symbol is not present in the avoidList
+		return !slices.Contains(avoidList, symbol)
+	})
+
+	return nfa
+}
+</code></pre><h2 id=nfa-for-a-sequence-of-expressions>NFA for a sequence of expressions</h2><p>A regular expression unfortunately doesn&rsquo;t have a single expression. For example, if we wish to search for the regex <code>cat</code>, we should concatenate (no pun intended) three single character expressions. So, how do we construct a NFA that represents the concatenation of two expressions?</p><ul><li><p>Mark the final states of the first NFA as &rsquo;non-final`. Because the NFA should satisfy the string which complies with the former followed by the latter.</p></li><li><p>Add an empty transition from all the final states of first NFA to the initial state of the second NFA. As simple as that!</p></li></ul><p><img src=/static/images/articles/grep/concat.png alt="NFA for concatenation"></p><pre><code class=language-go>func (a *ExpressionsSequence) NFA() *nfa.NFA {
+	nfas := []*nfa.NFA{}
+
+	for _, expr := range *a {
+		nfas = append(nfas, expr.NFA())
+	}
+
+	return nfa.ConcatList(nfas)
+}
+
+func Concat(nfa1, nfa2 *NFA) *NFA {
+	// record accepting states of nfa1 (before merge)
+	formerAcceptingStates := []StateID{}
+	for _, s := range nfa1.States {
+		if s.IsAccepting {
+			formerAcceptingStates = append(formerAcceptingStates, s.ID)
+		}
+	}
+
+	// record accepting states of nfa2 (so we can re-enable them after merge)
+	latterAcceptingStates := []StateID{}
+	for _, s := range nfa2.States {
+		if s.IsAccepting {
+			latterAcceptingStates = append(latterAcceptingStates, s.ID)
+		}
+	}
+
+	// Merge states from nfa2 into nfa1
+	maps.Copy(nfa1.States, nfa2.States)
+
+	// Connect accept states of nfa1 (original ones) to start of nfa2 via ε
+	for _, id := range formerAcceptingStates {
+		if st, ok := nfa1.States[id]; ok {
+			st.IsAccepting = false
+			nfa1.AddTransition(id, nfa2.Start, nil)
+		}
+	}
+
+	// Re-enable the accepting states from nfa2 (now present inside nfa1.States)
+	for _, id := range latterAcceptingStates {
+		if state, ok := nfa1.States[id]; ok {
+			state.IsAccepting = true
+		}
+	}
+
+	return nfa1
+}
+
+func ConcatList(nfas []*NFA) *NFA {
+	if len(nfas) == 0 {
+		return nil
+	}
+
+	if len(nfas) == 1 {
+		return nfas[0]
+	}
+
+	// Start with the first NFA
+	result := nfas[0]
+
+	// Sequentially concatenate
+	for i := 1; i &lt; len(nfas); i++ {
+		result = Concat(result, nfas[i])
+	}
+
+	return result
+}
+</code></pre><h3 id=but-whats-an-empty-transition>But what&rsquo;s an empty transition?</h3><p>An empty transition is such a transition function that allows you to create an extra current state by making a transition &lsquo;for free&rsquo;. It is marked by the <code>ε</code> (epsilon) character in the transition arrow.</p><h2 id=nfa-for--quantifier>NFA for <code>+</code> quantifier</h2><p>A &lsquo;one or more&rsquo; quantifier, symbolized as the <code>+</code> quantifier approves one or more occurence of the previous expression. For example, <code>ca+ts</code> matches any string which contains <code>c</code>, followed by one or more <code>a</code>, followed by a <code>t</code>, followed by a <code>s</code>.</p><p>So, how do we construct an NFA for the <code>+</code> quantifier? We do the following:</p><ul><li>Construct the NFA for the expression in which the quantifier is being applied</li><li>Add an empty transition from all the final states of the NFA to its initial state</li></ul><p>But why?</p><p>We want to approve any string which satisfies the NFA once or more times. So, by adding an empty transition from all the final states to the initial state, we allow the NFA to approve at least one, or more occurences of that string. After first occurence of the expression, the NFA will have ended up in at least one of the final states. If there are more occurences of that expression, the empty transition will add the initial state to the set of current states. After that, for the subsequent occurences of that expression, the NFA will again end up in one of the final states. Take a moment to absorb that. I cannot phrase that better :(</p><p><img src=/static/images/articles/grep/at-least-once.png alt="NFA for + quantifier"></p><h2 id=nfa-for-the--quantifier>NFA for the <code>?</code> quantifier</h2><p>A <code>zero or one</code> quantifier, symbolized as the <code>?</code> quantifier approves zero or one occurence of the previous expression. For example, <code>ca?ts</code> matches <code>cts</code> or <code>cats</code>.</p><p>So, how does the NFA for the <code>?</code> quantifier look like</p><ul><li>Just add an empty transition from the initial state to all the final states.</li></ul><p>This allows the evaluation to &lsquo;skip&rsquo; the NFA (complying with the zero occurence).</p><p><img src=/static/images/articles/grep/zero-or-one.png alt="NFA for ? quantifier"></p><h2 id=nfa-for--quantifier-1>NFA for <code>*</code> quantifier</h2><p>A <code>zero or more</code> quantifier, symbolized as the <code>*</code> operator approves zero or more occurences of the previous expression. For example, <code>ca*ts</code> matches <code>cts</code>, <code>cats</code>, <code>caaaaats</code>, etc.</p><p>So, how does the NFA for the <code>*</code> quantifier look like</p><ul><li>Just add an empty transition from the initial state to all the final states. And, add an empty transition from each final state to the initial state.</li></ul><p>This allows the evaluation to <code>skip</code> the NFA (because of the empty transitions from the initial state to the final states), and also approve any number of occurences of the pattern (because of the empty transitions from the final states to the initial state)</p><p><img src=/static/images/articles/grep/zero-or-more.png alt="NFA for * quantifier"></p><h2 id=nfa-for-the-n-quantifier>NFA for the <code>{n}</code> quantifier</h2><p>The <code>{n}</code> quantifier allows for exactly <code>n</code> repititions of the preceeding pattern. For example, <code>\d{4}</code> allows for exactly 4 repititions of a digit character. So, how do we convert the NFA from one that accepts a certain pattern to one that accepts <code>n</code> occurences of that pattern?</p><ul><li>Just concatenate the NFA <code>n</code> times, remove all the intermediate final states as non-final. By concatenate, I mean, add an empty transition from all the the final states of the previous NFA to the initial state of the current NFA.</li></ul><p><img src=/static/images/articles/grep/n-quantifier.png alt="NFA for {n} quantifier"></p><h2 id=nfa-for-the-n-quantifier-1>NFA for the <code>{n,}</code> quantifier</h2><p>The <code>{n,}</code> quantifier allows for exactly <code>n</code> or more than <code>n</code> repititions of the preceeding pattern. For example, <code>ca{3,}ts</code> allows <code>caaats</code>, <code>caaaats</code>, etc.</p><p>Just like we created the NFA for the <code>+</code> quantifier, which allowed 1 or more repititions of the certain expression. We start out by creating the NFA for <code>{n,}</code> quantifier by concatenating the NFA <code>n</code> times. But this NFA would approve of expressions which repeat themselves <code>n</code> times. To allow for more than <code>n</code> occurences, we add an empty transition from the final states of the last NFA to the initial state of the last NFA. This way, more than <code>n</code> occurences of the pattern would &rsquo;loop around&rsquo; the last NFA and be approved.</p><p><img src=/static/images/articles/grep/n-or-more-quantifier.png alt="NFA for {n,} quantifier"></p><h2 id=nfa-for-alternation>NFA for alternation</h2><p>Before we tackle the process of building the NFA for the bounded <code>{n,m}</code> quantifier, let&rsquo;s deal with creating the NFA for the alternation expression. It&rsquo;s a secret tool that&rsquo;ll help us later.</p><p>The alternation expression matches a string if either of the expressions in alternation options satisfy the string. For example <code>c(aa|bb|xx)ts</code> satisfies <code>caats</code>, <code>cbbts</code>, or <code>cxxts</code>.</p><p>So, how do we construct the NFA for the alternation expression?</p><ul><li>Construct the NFA for each expression in the alternation option</li><li>Create a new NFA with an initial state and a final state</li><li>Add an empty transition from the initial state of the new NFA to the initial states of all choices NFA</li><li>Add an empty transition from all the final states of all the choices NFA to the final state of the new NFA</li></ul><p>This allows the evaluation loop to take any one of these NFA&rsquo;s evaluation path due to non-determinancy. In other words, universe splits in to <code>n</code> versions (<code>n</code> is the number of options inside the alternation expression), where each evaluates whether the string matches one of these option.</p><p><img src=/static/images/articles/grep/nfa-alternation.png alt="NFA for alternation"></p><pre><code class=language-go>func (a *Alternation) NFA() *nfa.NFA {
+	var optionNFAs []*nfa.NFA
+
+	for _, exprSeq := range a.Options {
+		var seqNFAs []*nfa.NFA
+
+		for _, expr := range exprSeq {
+			seqNFAs = append(seqNFAs, expr.NFA())
+		}
+
+		seqNFA := nfa.ConcatList(seqNFAs)
+		optionNFAs = append(optionNFAs, seqNFA)
+	}
+
+	return nfa.UnionList(optionNFAs)
+}
+
+func UnionList(nfas []*NFA) *NFA {
+	if len(nfas) == 0 {
+		return nil
+	}
+
+	if len(nfas) == 1 {
+		return nfas[0]
+	}
+
+	// Create the result NFA
+	result := New()
+
+	// Create new start and accept states
+	newStart := result.AddState(false)
+	newAccept := result.AddState(true)
+	result.Start = newStart
+
+	for _, sub := range nfas {
+		// Merge states from sub NFA into result
+		maps.Copy(result.States, sub.States)
+
+		// ε-transition from new start → sub.Start
+		result.AddTransition(newStart, sub.Start, nil)
+
+		// For each accepting state in the sub NFA
+		for _, s := range sub.States {
+			if s.IsAccepting {
+				s.IsAccepting = false
+				result.AddTransition(s.ID, newAccept, nil)
+			}
+		}
+	}
+
+	return result
+}
+</code></pre><h2 id=nfa-for-the-nm-quantifier>NFA for the <code>{n,m}</code> quantifier</h2><p>Now that we&rsquo;ve dealt with creating an NFA for the alternation expression, it&rsquo;ll be easy to deal with the <code>{n,m}</code> expression, because, this expression allows between <code>n</code> and <code>m</code> occurences of the preceeding pattern. In other words, this expression is an alternation between <code>n</code>, <code>n+1</code>, <code>n+2</code>, <code>...</code>, <code>m-1</code>, and <code>m</code> occurences of the preceeding pattern. Since we&rsquo;ve already dealt with exact repitition quantifier <code>{n}</code>, this is a piece of cake!</p><p><img src=/static/images/articles/grep/quantifier-between-n-m.png alt="NFA for {n,m} quantifier"></p><p>Now, finally, we can unify the logic of all the quantifier expressions at once.</p><pre><code class=language-go>func (a *Quantifier) NFA() *nfa.NFA {
+	// Kleene Plus case: Add epsilon transition from all the final states to the initial states
+	if a.Minimum == 1 &amp;&amp; a.Maximum == -1 {
+		expressionNFA := a.MatchExpression.NFA()
+		for _, s := range expressionNFA.States {
+			if s.IsAccepting {
+				expressionNFA.AddTransition(s.ID, expressionNFA.Start, nil)
+			}
+		}
+		return expressionNFA
+	}
+
+	// Case of 0/1 (?) : Add epsilon trasition from start state to all final states
+	if a.Minimum == 0 &amp;&amp; a.Maximum == 1 {
+		expressionNFA := a.MatchExpression.NFA()
+		for _, s := range expressionNFA.States {
+			if s.IsAccepting {
+				expressionNFA.AddTransition(expressionNFA.Start, s.ID, nil)
+			}
+		}
+		return expressionNFA
+	}
+
+	// Kleene star case
+	if a.Minimum == 0 &amp;&amp; a.Maximum == -1 {
+		expressionNFA := a.MatchExpression.NFA()
+		for _, s := range expressionNFA.States {
+			// Add empty transitions from start state to all end states
+			// And add empty transitions from all end states to start state
+			if s.IsAccepting {
+				expressionNFA.AddTransition(expressionNFA.Start, s.ID, nil)
+				expressionNFA.AddTransition(s.ID, expressionNFA.Start, nil)
+			}
+		}
+		return expressionNFA
+	}
+
+	// Minimum == maximum case
+	if a.Minimum == a.Maximum {
+		return nfa.RepeatExactly(a.MatchExpression.NFA(), a.Minimum)
+	}
+
+	// For {n,} case
+	if a.Maximum == -1 {
+		return nfa.RepeatAtLeast(a.MatchExpression.NFA(), a.Minimum)
+	}
+
+	// For {n,m} case
+	return nfa.RepeatBetween(a.MatchExpression.NFA(), a.Minimum, a.Maximum)
+}
+</code></pre><h2 id=processing-the-nfa>Processing the NFA</h2><p>Finally, to process the NFA:</p><ul><li>Start with the initial state and compute its epsilon closure</li><li>Make transition to get next set of states</li><li>Compute epsilon closure of the next states</li><li>Loop</li></ul><p>If any of the current states end up in the final state, the string matches the regular expression.</p><pre><code class=language-go>func (n *NFA) Process(inputText []byte, withEndAnchor bool) bool {
+	currentStates := n.EpsilonClosure([]StateID{n.Start})
+
+	for _, ch := range inputText {
+
+		for currentState := range currentStates {
+			if !withEndAnchor &amp;&amp; n.IsAccepting(currentState) {
+				return true
+			}
+		}
+
+		next := make(map[StateID]bool)
+
+		// collect reachable states
+		for stateID := range currentStates {
+			state := n.States[stateID]
+
+			for _, t := range state.Transitions {
+				if t.SymbolFunc != nil &amp;&amp; t.SymbolFunc(ch) {
+					next[t.To] = true
+				}
+			}
+		}
+
+		// Compute epsilon-closure of next states
+		if len(next) == 0 {
+			return false // no transition possible — fail early
+		}
+
+		var nextSlice []StateID
+
+		for id := range next {
+			nextSlice = append(nextSlice, id)
+		}
+
+		currentStates = n.EpsilonClosure(nextSlice)
+	}
+
+	// accept if any current state is accepting
+	// Every text in inputText will have been processed by now, so endAnchor will play no role here
+	for stateID := range currentStates {
+		if n.States[stateID].IsAccepting {
+			return true
+		}
+	}
+
+	return false
+}
+</code></pre><h2 id=conclusion>Conclusion</h2><p>That is the whole trick: turn the regex into a machine that knows how to walk through your text, let non-determinism branch into parallel paths, and track every state that survives. Once you understand how each small piece of a pattern becomes a small NFA, the rest is just stitching those pieces together with epsilon transitions.</p><p>There is no magic here. Grep works because NFAs are simple, modular and effective. Build the parser, assemble the automaton, run it across the input, and you are done. You now know enough to hack together your own mini grep in a single night, just like Thompson did.</p></main><footer><link rel=stylesheet href=//cdn.jsdelivr.net/npm/katex/dist/katex.min.css><script src=//cdn.jsdelivr.net/combine/npm/katex/dist/katex.min.js,npm/katex/dist/contrib/auto-render.min.js,npm/@xiee/utils/js/render-katex.js defer></script><script src=//cdn.jsdelivr.net/npm/@xiee/utils/js/center-img.min.js defer></script><hr>© Udeshya Dhungana 2020 - Today | <a href=https://github.com/udeshyadhungana>Github</a> | <a href=https://x.com/udeshyadhungana>Twitter</a></footer></body></html>
