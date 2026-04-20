@@ -166,7 +166,9 @@ function piSum(a, b) {
 ```
 This is the beauty of abstraction. A great degree of sophistication can be relatively easy if you know how to build abstractions properly. "How?", you ask. Remember when your high school teacher was vociferously reiterating that integral is just a fancy way of calculating a sum? Or, in the language of mathematicians,
 
-$$ \int_{a}^{b} \[\ f(a + \frac{dx}{2}) + f(a + \frac{3dx}{2}) + f(a + \frac{5dx}{2})\ \]\ dx  $$
+$$
+\int_{a}^{b} \left[ f\left(a + \frac{dx}{2}\right) + f\left(a + \frac{3dx}{2}\right) + f\left(a + \frac{5dx}{2}\right) + \cdots \right] dx
+$$
 
 Let's see if he was right or not. Let's test it on a function the square root function.
 ```js
