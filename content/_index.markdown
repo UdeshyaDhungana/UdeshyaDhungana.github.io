@@ -4,7 +4,7 @@ title: Home
 
 # Udeshya
 
-I strive to make computers capable of helping the people.
+Giving businesses at edge at yantriklabs.com
 
 You can contact me via:
 - udeshyadhungana1 [at] gmail.com
