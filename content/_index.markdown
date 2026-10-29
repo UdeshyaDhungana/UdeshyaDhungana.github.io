@@ -4,7 +4,7 @@ title: Home
 
 # Udeshya
 
-Giving businesses at edge at [yantriklabs.com](https://yantriklabs.com)
+Managing computes
 
 You can contact me via:
 - udeshyadhungana1 [at] gmail.com
