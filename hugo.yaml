@@ -44,3 +44,8 @@ markup:
           inline:
           - - \(
             - \)
+
+security:
+  # Hugo >= 0.16x denies Org content by default; allow it for .org articles
+  allowContent:
+    - "! ^text/html$"

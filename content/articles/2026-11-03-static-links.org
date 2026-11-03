@@ -1,5 +1,6 @@
 #+TITLE: Static Links
 #+AUTHOR: Udeshya Dhungana
+#+DATE: 2026-11-03
 
 * Static Links
 
