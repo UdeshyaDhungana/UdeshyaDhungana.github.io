@@ -1,0 +1,321 @@
+#+TITLE: Static Links
+#+AUTHOR: Udeshya Dhungana
+
+* Static Links
+
+I was building a [[https://github.com/UdeshyaDhungana/mulangc][compiler]] and I came across a problem. Consider this scenario in a compiled language:
+
+#+begin_src
+  function foo() {
+    local a = 69;
+    function bar() {
+      return a;
+    }
+    function baz() {
+      return bar();
+    }
+    return baz();
+  }
+
+  print(foo())
+#+end_src
+
+How do compiled languages that allow nested functions look up the value of a variable that is neither global nor local to the nested function? I want you to think about this problem.
+
+If this were an interpreted language, at the time of evaluation, we would create a new environment for each function we enter.
+
+1. The call to =foo()= creates a new environment.
+2. In =foo='s environment, we store a variable =a= with value =69= (nice).
+3. The symbols =bar= and =baz= are bound to their function bodies.
+4. In the =return= statement, the call =baz()= is evaluated.
+5. =baz='s body is evaluated, which calls =bar=.
+6. While evaluating =bar='s body, we encounter a symbol =a=.
+7. =a= is not in =bar='s environment. Each environment keeps a pointer to the environment its function was defined in, so we follow that pointer from =bar= to =foo= and find =a= there. =baz= is skipped, even though =baz= is the function that called =bar=.
+
+This is easy. But what happens if our language is compiled? We can't know at compile time how many runtime frames deep our current function is. There can be any number of calls in between.
+
+** Frames
+
+A compiled program has no environments to search. Each function call gets a block of memory on the stack called a /frame/, and the compiler decides ahead of time where each variable sits inside it. mulangc emits arm64 assembly, so the rest of this post uses arm64 registers. Three of them matter here:
+
+- =sp=, the stack pointer. The stack grows toward lower addresses, and on arm64 =sp= must always be a multiple of 16.
+- =x30=, the link register. =bl foo= stores the return address in =x30= and jumps to =foo=. =ret= jumps to whatever address is in =x30=.
+- =x29=, the frame pointer. It points at the current function's frame and stays fixed while the function runs. Variables are addressed as offsets from it.
+
+Both =x29= and =x30= belong to whichever function is running. When =foo= calls =baz=, the =bl= overwrites =x30=, and =baz= then points =x29= at its own frame. For =foo= to resume later, both values have to survive the call. So every function saves its caller's pair when it starts and restores it before returning:
+
+#+begin_src asm
+  foo:
+      stp  x29, x30, [sp, #-16]!   // push the caller's x29 and x30
+      mov  x29, sp                 // x29 now points at foo's frame
+      sub  sp, sp, #16             // make room for foo's variables
+      ...
+      mov  sp, x29                 // drop foo's variables
+      ldp  x29, x30, [sp], #16     // restore the caller's x29 and x30
+      ret                          // jump to the address in x30
+#+end_src
+
+The saved pair is called the /frame record/. =x29= points at it. The saved =x30= sits 8 bytes above, and the function's variables start 8 bytes below. Here is the stack after =foo= sets up its frame. The addresses are made up; only the distances between them matter.
+
+#+CAPTION: Figure 1. The stack after foo's prologue.
+#+begin_example
+     address   contents
+              ┌───────────────────────────────┐
+      0x1F8   │ saved x30                     │
+      0x1F0   │ saved x29                     │  main
+      0x1E8   │ ...                           │
+      0x1E0   │ ...                           │
+              ├───────────────────────────────┤
+      0x1D8   │ saved x30   (back into main)  │
+      0x1D0   │ saved x29 = 0x1F0             │  foo    ◄── x29
+      0x1C8   │ a = 69                        │         x29 - 8
+      0x1C0   │ (padding)                     │         ◄── sp
+              └───────────────────────────────┘
+#+end_example
+
+The padding is there because =a= needs 8 bytes and =sp= has to move in steps of 16.
+
+The compiler does not know the address =0x1C8=. It knows that while =foo= runs, =a= is at =x29 - 8=, and it emits =ldr x0, [x29, #-8]=. Every variable access in a compiled function looks like this: a fixed offset from =x29=.
+
+Each frame record stores the caller's =x29=, so the records form a linked list that runs from the newest frame back to the oldest. This list is the /dynamic chain/. Debuggers walk it to print a backtrace. Here is the full stack once =bar= is running:
+
+#+CAPTION: Figure 2. The stack while bar runs. Each saved x29 holds the address of the caller's frame record.
+#+begin_example
+     address   contents
+              ┌───────────────────────────────┐
+      0x1F8   │ saved x30                     │
+      0x1F0   │ saved x29                     │  main
+      0x1E8   │ ...                           │
+      0x1E0   │ ...                           │
+              ├───────────────────────────────┤
+      0x1D8   │ saved x30   (back into main)  │
+      0x1D0   │ saved x29 = 0x1F0             │  foo
+      0x1C8   │ a = 69                        │
+      0x1C0   │ (padding)                     │
+              ├───────────────────────────────┤
+      0x1B8   │ saved x30   (back into foo)   │
+      0x1B0   │ saved x29 = 0x1D0             │  baz
+              ├───────────────────────────────┤
+      0x1A8   │ saved x30   (back into baz)   │
+      0x1A0   │ saved x29 = 0x1B0             │  bar    ◄── x29, sp
+              └───────────────────────────────┘
+
+     dynamic chain:  0x1A0 (bar) ──▶ 0x1B0 (baz) ──▶ 0x1D0 (foo) ──▶ 0x1F0 (main)
+#+end_example
+
+** One frame up
+
+Inside =bar=, the compiler needs =a=. It knows two facts: =a= is at =x29 - 8= in =foo='s frame, and =bar= is declared one level inside =foo=. A first translation is "one level out means one frame up the stack": follow the saved =x29= once, then read =a= from that frame.
+
+#+begin_src asm
+  bar:
+      ...
+      ldr  x11, [x29]              // saved x29: the caller's frame
+      ldr  x0,  [x11, #-8]         // read a from that frame
+#+end_src
+
+If =foo= called =bar= directly, this would work. The caller would be =foo=, =x11= would hold =foo='s frame, and =x11 - 8= would be =a=.
+
+In our program, =foo= calls =baz= and =baz= calls =bar=. Follow the two loads on the stack from Figure 2:
+
+#+CAPTION: Figure 3. Following the dynamic chain from bar lands in baz, and the read hits bar's return address.
+#+begin_example
+     address   contents
+              ├───────────────────────────────┤
+      0x1D8   │ saved x30   (back into main)  │
+      0x1D0   │ saved x29 = 0x1F0             │  foo
+      0x1C8   │ a = 69                        │         ◄── where a is
+      0x1C0   │ (padding)                     │
+              ├───────────────────────────────┤
+      0x1B8   │ saved x30   (back into foo)   │
+      0x1B0   │ saved x29 = 0x1D0             │  baz    ◄── x11 = [0x1A0]
+              ├───────────────────────────────┤
+      0x1A8   │ saved x30   (back into baz)   │         ◄── x11 - 8, read as "a"
+      0x1A0   │ saved x29 = 0x1B0             │  bar    ◄── x29
+              └───────────────────────────────┘
+#+end_example
+
+=x11= becomes =0x1B0=, which is =baz='s frame. The second load reads =0x1A8=, which is =bar='s saved return address. The program prints a code address as if it were an integer.
+
+Following the chain further does not fix this. If =baz= were recursive and called itself ten times before calling =bar=, =foo= would be eleven frames up. The number of frames between =bar= and =foo= is decided at runtime, by whoever calls =bar=.
+
+** Two kinds of depth
+
+That failure comes from mixing up two numbers.
+
+Define a function's /lexical depth/ as the number of functions wrapped around its body in the source code. Treat the top-level code as a function called =main= at depth 0. mulangc does this and names it =_main=. Then =foo= is at depth 1, and =bar= and =baz= are both at depth 2. A variable has the depth of the body it is declared in, so =a= is at depth 1.
+
+#+CAPTION: Figure 4. The same program, seen by the compiler (left) and at runtime (right).
+#+begin_example
+     in the source                       on the stack while bar runs
+
+     main           depth 0              ┌──────┐
+      └─ foo        depth 1              │ main │
+          ├─ bar    depth 2              ├──────┤
+          └─ baz    depth 2              │ foo  │
+                                         ├──────┤
+                                         │ baz  │
+                                         ├──────┤
+                                         │ bar  │
+                                         └──────┘
+
+     bar is 1 level inside foo.          bar is 2 frames below foo.
+#+end_example
+
+The left side is fixed the moment the source is written. The compiler sees all of it. The right side depends on the call path, and the compiler sees none of it. The "one frame up" attempt measured a distance on the left and walked it on the right.
+
+The fix is to make the stack carry a second linked list, one that follows the shape on the left.
+
+** Static links
+
+Every frame gets one extra slot. It holds the address of the frame of the function this function was /declared/ in. That slot is the /static link/. The saved =x29= points to the caller. The static link points to the lexical parent.
+
+In mulangc, the static link is slot 0 of every frame, at =x29 - 8=. Everything else moves down by 8 bytes, so =a= is now at =x29 - 16=.
+
+#+CAPTION: Figure 5. The stack while bar runs, with a static link in every frame.
+#+begin_example
+     address   contents
+              ┌───────────────────────────────┐
+      0x1F8   │ saved x30                     │
+      0x1F0   │ saved x29                     │  main
+      0x1E8   │ static link  (unused)         │
+      0x1E0   │ (padding)                     │
+              ├───────────────────────────────┤
+      0x1D8   │ saved x30   (back into main)  │
+      0x1D0   │ saved x29   = 0x1F0  (main)   │  foo
+      0x1C8   │ static link = 0x1F0  (main)   │
+      0x1C0   │ a = 69                        │
+              ├───────────────────────────────┤
+      0x1B8   │ saved x30   (back into foo)   │
+      0x1B0   │ saved x29   = 0x1D0  (foo)    │  baz
+      0x1A8   │ static link = 0x1D0  (foo)    │
+      0x1A0   │ (padding)                     │
+              ├───────────────────────────────┤
+      0x198   │ saved x30   (back into baz)   │
+      0x190   │ saved x29   = 0x1B0  (baz)    │  bar    ◄── x29
+      0x188   │ static link = 0x1D0  (foo)    │
+      0x180   │ (padding)                     │         ◄── sp
+              └───────────────────────────────┘
+#+end_example
+
+=bar='s saved =x29= points to =baz=, because =baz= called it. =bar='s static link points to =foo=, because =bar= is written inside =foo=. The same stack now holds two chains:
+
+#+CAPTION: Figure 6. Two chains through the same four frames.
+#+begin_example
+     ┌──────┐   ┌──────┐   ┌──────┐   ┌──────┐
+     │ main │◄──│ foo  │◄──│ baz  │◄──│ bar  │    dynamic chain (saved x29)
+     └──────┘   └──────┘   └──────┘   └──────┘
+        ▲          │ ▲ ▲       │          │
+        └──────────┘ │ └───────┘          │       static chain (static link)
+                     └────────────────────┘
+#+end_example
+
+The dynamic chain answers "where do I return to?". The static chain answers "where do my outer variables live?". =baz= sits in the middle of the first chain and is absent from the second.
+
+** Reading a variable through the static link
+
+To read a variable, the compiler computes
+
+#+begin_example
+     hops = depth of the function reading it − depth of the variable
+#+end_example
+
+and emits one load per hop, starting from =x29=. Both depths are known at compile time. mulangc's semantic analysis records them for every variable, so code generation only subtracts.
+
+=bar= is at depth 2 and =a= is at depth 1, so it takes one hop:
+
+#+begin_src asm
+  bar:
+      ...
+      ldr  x11, [x29, #-8]         // bar's static link: foo's frame (0x1D0)
+      ldr  x0,  [x11, #-16]        // a, at foo's x29 - 16 (0x1C0)
+#+end_src
+
+If a function =qux= were declared inside =bar= and read =a=, =qux= would be at depth 3 and the access would take two hops:
+
+#+begin_src asm
+      ldr  x11, [x29, #-8]         // qux's static link: bar's frame
+      ldr  x11, [x11, #-8]         // bar's static link: foo's frame
+      ldr  x0,  [x11, #-16]        // a
+#+end_src
+
+Zero hops means the variable is local, and the read uses =x29= directly. Writes follow the same walk and end in a =str= instead of a =ldr=.
+
+** Setting the static link
+
+The static link has to be written when a frame is created, and the callee cannot compute it. It does not know where its parent's frame is. The caller does, because the caller's static chain leads there.
+
+mulangc passes the static link in =x9=, next to the arguments in =x0= to =x7=. Every function's prologue stores it into slot 0:
+
+#+begin_src asm
+  bar:
+      stp  x29, x30, [sp, #-16]!
+      mov  x29, sp
+      sub  sp, sp, #16
+      str  x9, [x29, #-8]          // static link into slot 0
+#+end_src
+
+To find the value for =x9=, the caller uses the same subtraction as a variable read. Let the caller run at depth =d=, and let the callee be declared at depth =p=. Starting from the caller's =x29=, follow static links =d - p= times.
+
+| Call           | Caller runs at depth | Callee declared at depth | Hops | Passed in =x9=                   |
+|----------------+----------------------+--------------------------+------+----------------------------------|
+| =main= → =foo= |                    0 |                        0 |    0 | =main='s =x29= (=0x1F0=)         |
+| =foo= → =baz=  |                    1 |                        1 |    0 | =foo='s =x29= (=0x1D0=)          |
+| =baz= → =bar=  |                    2 |                        1 |    1 | =baz='s static link (=0x1D0=)    |
+| =baz= → =baz=  |                    2 |                        1 |    1 | =baz='s static link (=0x1D0=)    |
+
+The first two rows are a parent calling its child, so the parent passes its =x29=. The last two are a call to a sibling and a recursive call. In both, the caller passes along the static link it was given, so siblings and repeated calls of the same function all point at the same parent.
+
+** Why this works
+
+Here is the claim:
+
+#+begin_quote
+Every frame's static link holds the address of a frame of the function it was declared in, and that frame is still on the stack.
+#+end_quote
+
+When the program starts, the only frame is =main='s. It has no parent, so the claim holds.
+
+Now assume the claim holds for every frame on the stack, and some caller at depth =d= calls a function =F= declared at depth =p=.
+
+1. =F='s name is visible from the caller. A name is visible only inside the body that declares it, so the caller's body sits inside the body at depth =p=. The function running at depth =p= is the caller itself or one of its lexical ancestors.
+2. The walk starts at the caller's frame. By the assumption, each static link leads to the function one level out, so each hop lowers the depth by one. After =d - p= hops, the walk stands on a frame at depth =p=. That is =F='s parent.
+3. Every frame the walk visited was reached through a static link, and by the assumption those frames are on the stack.
+4. =F='s new frame is pushed above its parent. The stack only removes frames from the top, so the parent stays on the stack for as long as =F= runs.
+
+So =F='s frame satisfies the claim too, and by induction every frame does. A variable read uses the same walk with the variable's depth in place of =p=, so it lands on the frame that declared the variable and reads it at an offset fixed at compile time.
+
+The dynamic chain does not appear in this argument. It does not matter how many frames sit between =bar= and =foo=, or what they are. Here is =baz= calling itself three times before calling =bar=:
+
+#+CAPTION: Figure 7. Recursion grows the stack, and every static link still points at the same foo.
+#+begin_example
+        ┌──────┐
+     ┌─►│ main │
+     │  ├──────┤
+     └──│ foo  │◄──┬──┬──┬──┐
+        ├──────┤   │  │  │  │
+        │ baz  │───┘  │  │  │
+        ├──────┤      │  │  │
+        │ baz  │──────┘  │  │
+        ├──────┤         │  │
+        │ baz  │─────────┘  │
+        ├──────┤            │
+        │ bar  │────────────┘
+        └──────┘
+
+     arrows are static links; the dynamic chain is omitted
+#+end_example
+
+The stack is six frames deep. =bar= still reads =a= with one hop.
+
+** Cost and limits
+
+Each hop costs one load. Nesting in practice rarely goes past two or three levels, so an outer variable costs two or three loads at most. An alternative is a /display/: a small array with one frame pointer per lexical depth, so any outer variable takes a single load. The cost moves to calls and returns, which have to keep the array up to date. Static links keep the bookkeeping to one register and one store per call.
+
+Static links also rely on one property of mulang: a nested function never outlives its parent. Functions cannot be stored in variables or returned, so =bar= can only run while =foo='s frame is on the stack. If =foo= could return =bar= as a value, =foo='s frame would be popped on return, and =bar='s static link would point at memory the next call overwrites. Languages with closures handle this by moving captured variables off the stack and onto the heap. That is a topic for another post.
+
+** Back to the interpreter
+
+The interpreter at the start of this post found =a= by following each environment's pointer to the environment its function was defined in. A static link is the same pointer, stored in a stack frame instead of a heap-allocated environment.
+
+The compiler cannot know how deep the stack will be. It knows how deep the source is. The static link lets the program use that second number at runtime.
